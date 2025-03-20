@@ -1,0 +1,31 @@
+{
+    "name": "zahzah/module-employee",
+    "autoload": {
+        "psr-4": {
+            "Zahzah\\ModuleEmployee\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "hamzah",
+            "email": "hamzahnuralfalah@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Zahzah\\ModuleEmployee\\ModuleEmployeeServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "zahzah/module-user": "2.x",
+        "zahzah/module-people": "2.x",
+        "zahzah/module-profession": "2.x",
+        "gii/module-service": "2.x",
+        "zahzah/laravel-support": "2.x",
+        "zahzah/module-transaction": "2.x"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": false
+}
