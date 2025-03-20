@@ -1,9 +1,7 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Contracts;
+namespace Hanafalah\ModuleEmployee\Contracts;
 
-use Gii\ModuleService\Contracts\Service;
+use Hanafalah\ModuleService\Contracts\Service;
 
-interface EmployeeService extends Service
-{
-}
+interface EmployeeService extends Service {}

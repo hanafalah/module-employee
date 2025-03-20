@@ -1,9 +1,10 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Enums\Employee;
+namespace Hanafalah\ModuleEmployee\Enums\Employee;
 
-enum CardIdentity: string{
-    case SIP = 'SIP'; 
-    case SIK = 'SIK'; 
-    case NIP = 'NIP'; 
+enum CardIdentity: string
+{
+    case SIP = 'SIP';
+    case SIK = 'SIK';
+    case NIP = 'NIP';
 }

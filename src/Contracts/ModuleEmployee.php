@@ -1,9 +1,7 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Contracts;
+namespace Hanafalah\ModuleEmployee\Contracts;
 
-use Zahzah\LaravelSupport\Contracts\DataManagement;
+use Hanafalah\LaravelSupport\Contracts\DataManagement;
 
-interface ModuleEmployee extends DataManagement 
-{
-}
+interface ModuleEmployee extends DataManagement {}

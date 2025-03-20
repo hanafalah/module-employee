@@ -1,8 +1,8 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Resources\Employee;
+namespace Hanafalah\ModuleEmployee\Resources\Employee;
 
-use Zahzah\ModulePeople\Resources\People\ShowPeople;
+use Hanafalah\ModulePeople\Resources\People\ShowPeople;
 
 class ShowEmployee extends ViewEmployee
 {
@@ -11,30 +11,29 @@ class ShowEmployee extends ViewEmployee
     {
         $arr = [
             'hired_at'   => $this->hired_at,
-            'people'     => $this->relationValidation('people',function(){
+            'people'     => $this->relationValidation('people', function () {
                 return $this->people->toShowApi();
             }),
-            'employee_service' => $this->relationValidation('employeeService',function(){
+            'employee_service' => $this->relationValidation('employeeService', function () {
                 return $this->employeeService->toShowApi();
             }),
-            'profession' => $this->relationValidation('profession',function(){
+            'profession' => $this->relationValidation('profession', function () {
                 $profession = $this->profession;
                 return [
                     'id'   => $profession->getKey(),
                     'name' => $profession->name
                 ];
             }),
-            'card_identities' => $this->relationValidation('cardIdentities',function(){
+            'card_identities' => $this->relationValidation('cardIdentities', function () {
                 $cardIdentities = $this->cardIdentities;
-                return $cardIdentities->isEmpty() ? null : (object) $cardIdentities->mapWithKeys(function($cardIdentity) {
+                return $cardIdentities->isEmpty() ? null : (object) $cardIdentities->mapWithKeys(function ($cardIdentity) {
                     return [\strtoupper($cardIdentity->flag) => $cardIdentity->value];
                 });
-            },true)
+            }, true)
         ];
 
-        $arr = array_merge(parent::toArray($request),$arr);
-        
+        $arr = array_merge(parent::toArray($request), $arr);
+
         return $arr;
     }
 }
-

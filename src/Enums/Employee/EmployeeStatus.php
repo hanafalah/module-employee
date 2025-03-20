@@ -1,8 +1,9 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Enums\Employee;
+namespace Hanafalah\ModuleEmployee\Enums\Employee;
 
-enum EmployeeStatus: int{
+enum EmployeeStatus: int
+{
     case DRAFT          = 0;
     case ACTIVE         = 1;
     case INACTIVE       = 2;
@@ -12,5 +13,5 @@ enum EmployeeStatus: int{
     case INTERN         = 6;
     case PROBATION      = 7;
     case DECEASED       = 8;
-    case RESIGNED       = 9;    
+    case RESIGNED       = 9;
 }

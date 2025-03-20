@@ -1,21 +1,24 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Models\Employee;
+namespace Hanafalah\ModuleEmployee\Models\Employee;
 
-use Gii\ModuleService\Models\Service;
-use Zahzah\ModuleEmployee\Resources\EmployeeService\{
-    ViewEmployeeService, ShowEmployeeService
+use Hanafalah\ModuleService\Models\Service;
+use Hanafalah\ModuleEmployee\Resources\EmployeeService\{
+    ViewEmployeeService,
+    ShowEmployeeService
 };
 
 class EmployeeService extends Service
 {
     protected $table = 'services';
 
-    public function toViewApi(){
+    public function toViewApi()
+    {
         return new ViewEmployeeService($this);
     }
 
-    public function toShowApi(){
+    public function toShowApi()
+    {
         return new ShowEmployeeService($this);
     }
 }

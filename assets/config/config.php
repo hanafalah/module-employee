@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-use Zahzah\ModuleEmployee\{
+use Hanafalah\ModuleEmployee\{
     Models as ModuleEmployeeModels,
     Commands as ModuleEmployeeCommands,
     Contracts

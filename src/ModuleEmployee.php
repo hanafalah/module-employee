@@ -1,10 +1,11 @@
 <?php
 
-namespace Zahzah\ModuleEmployee;
+namespace Hanafalah\ModuleEmployee;
 
-use Zahzah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\LaravelSupport\Supports\PackageManagement;
 
-class ModuleEmployee extends PackageManagement implements Contracts\ModuleEmployee{
+class ModuleEmployee extends PackageManagement implements Contracts\ModuleEmployee
+{
     /** @var array */
     protected $__module_employee_config = [];
 
@@ -15,7 +16,8 @@ class ModuleEmployee extends PackageManagement implements Contracts\ModuleEmploy
      * @throws Exception description of exception
      * @return void
      */
-    public function __construct(){
-        $this->setConfig('module-employee',$this->__module_employee_config);
+    public function __construct()
+    {
+        $this->setConfig('module-employee', $this->__module_employee_config);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Resources\Employee;
+namespace Hanafalah\ModuleEmployee\Resources\Employee;
 
-use Zahzah\LaravelSupport\Resources\ApiResource;
-use Zahzah\ModulePeople\Resources\People\ViewPeople;
+use Hanafalah\LaravelSupport\Resources\ApiResource;
+use Hanafalah\ModulePeople\Resources\People\ViewPeople;
 
 class ViewEmployee extends ApiResource
 {
@@ -11,13 +11,13 @@ class ViewEmployee extends ApiResource
     {
         $arr = [
             'id'               => $this->id,
-            'people'           => $this->propResource($this->people,ViewPeople::class,['id']),
+            'people'           => $this->propResource($this->people, ViewPeople::class, ['id']),
             'status'           => $this->status,
             'profile'          => $this->profile ?? null,
-            'employee_service' => $this->relationValidation('employeeService',function(){
+            'employee_service' => $this->relationValidation('employeeService', function () {
                 return $this->employeeService->toViewApi();
             }),
-            'user_reference'   => $this->relationValidation('userReference',function(){
+            'user_reference'   => $this->relationValidation('userReference', function () {
                 $userReference = $this->userReference;
                 return $userReference->toShowApi();
             }),
@@ -26,9 +26,7 @@ class ViewEmployee extends ApiResource
                 return $profession->toShowApi();
             })
         ];
-        
+
         return $arr;
     }
-
 }
-

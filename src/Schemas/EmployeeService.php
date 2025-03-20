@@ -1,15 +1,16 @@
 <?php
 
-namespace Zahzah\ModuleEmployee\Schemas;
+namespace Hanafalah\ModuleEmployee\Schemas;
 
-use Gii\ModuleService\Schemas\Service;
+use Hanafalah\ModuleService\Schemas\Service;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Zahzah\ModuleEmployee\Contracts\EmployeeService as ContractsEmployeeService;
-use Zahzah\ModuleEmployee\Resources\EmployeeService\{ViewEmployeeService, ShowEmployeeService};
-use Zahzah\ModuleTransaction\Contracts\PriceComponent;
+use Hanafalah\ModuleEmployee\Contracts\EmployeeService as ContractsEmployeeService;
+use Hanafalah\ModuleEmployee\Resources\EmployeeService\{ViewEmployeeService, ShowEmployeeService};
+use Hanafalah\ModuleTransaction\Contracts\PriceComponent;
 
-class EmployeeService extends Service implements ContractsEmployeeService{
+class EmployeeService extends Service implements ContractsEmployeeService
+{
     protected string $__entity = 'EmployeeService';
     public static $employee_service_model;
 
@@ -18,82 +19,91 @@ class EmployeeService extends Service implements ContractsEmployeeService{
         'show' => ShowEmployeeService::class
     ];
 
-    public function createEmployeeService($employee, array $attributes){
+    public function createEmployeeService($employee, array $attributes)
+    {
         $employee_service = $employee->employeeService()->updateOrCreate([
             'reference_id'   => $employee->getKey(),
             'reference_type' => $employee->getMorphClass()
-        ],[
+        ], [
             'name' => $attributes['name'] ?? 'Employee Service Rates',
         ]);
 
         return $employee_service;
     }
 
-    public function createPriceComponent($employee, $employee_service, $attributes){
+    public function createPriceComponent($employee, $employee_service, $attributes)
+    {
         $price_component_schema = $this->schemaContract('price_component');
         return $price_component_schema->prepareStorePriceComponent([
             'model_id'          => $employee->getKey(),
             'model_type'        => $employee->getMorphClass(),
             'service_id'        => $employee_service->getKey(),
             'service'           => $employee_service,
-            'tariff_components' => $attributes['tariff_components'] 
+            'tariff_components' => $attributes['tariff_components']
         ]);
     }
 
-    public function prepareStoreEmployeeService(? array $attributes = null): Model{
+    public function prepareStoreEmployeeService(?array $attributes = null): Model
+    {
         $attributes ??= request()->all();
         if (!isset($attributes['employee_id'])) throw new \Exception('employee_id is required');
 
         $employee = $this->EmployeeModel()->findOrFail($attributes['employee_id']);
         $employee_service = $this->createEmployeeService($employee, $attributes);
 
-        if (isset($attributes['tariff_components']) && count($attributes['tariff_components']) > 0){
+        if (isset($attributes['tariff_components']) && count($attributes['tariff_components']) > 0) {
             $this->createPriceComponent($employee, $employee_service, $attributes);
-        }else{
+        } else {
             $employee_service->priceComponents()->delete();
         }
 
         return static::$employee_service_model = $employee;
     }
 
-    public function prepareShowEmployeeService(? Model $model = null, ? array $attributes = null): Model{
+    public function prepareShowEmployeeService(?Model $model = null, ?array $attributes = null): Model
+    {
         $attributes ??= request()->all();
-    
+
         $model ??= $this->getEmployeeService();
-        if (isset($model)){
+        if (isset($model)) {
             $id = $attributes['id'] ?? null;
             if (!isset($id)) throw new \Exception('id not found');
-    
+
             $model = $this->employeeService()->with($this->showUsingRelation())->findOrFail($id);
-        }else{
+        } else {
             $model->load($this->showUsingRelation());
         }
         return static::$employee_service_model = $model;
     }
 
-    public function showUsingRelation(): array {
+    public function showUsingRelation(): array
+    {
         return [];
     }
 
-    public function showEmployeeService(? Model $model = null): array{
-        return $this->transforming($this->__resources['show'],function() use ($model){
+    public function showEmployeeService(?Model $model = null): array
+    {
+        return $this->transforming($this->__resources['show'], function () use ($model) {
             return $this->prepareShowEmployeeService($model);
         });
     }
 
-    public function storeEmployeeService(): array{
-        return $this->transaction(function(){
+    public function storeEmployeeService(): array
+    {
+        return $this->transaction(function () {
             return $this->showEmployeeService($this->prepareStoreEmployeeService());
         });
     }
 
-    public function getEmployeeService(): mixed{
+    public function getEmployeeService(): mixed
+    {
         return static::$employee_service_model;
     }
 
-    public function employeeService(mixed $conditionals = null): Builder{
+    public function employeeService(mixed $conditionals = null): Builder
+    {
         $this->booting();
         return $this->EmployeeServiceModel()->conditionals($conditionals)
-                    ->with('priceComponents')->withParameters();
+            ->with('priceComponents')->withParameters();
     }
 }
