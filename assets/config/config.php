@@ -9,9 +9,7 @@ use Hanafalah\ModuleEmployee\{
 return [
     'app' => [
         'contracts' => [
-            'employee'         => Contracts\Employee::class,
-            'employee_service' => Contracts\EmployeeService::class,
-            'module_employee'  => Contracts\ModuleEmployee::class
+            // ADD YOUR CONTRACTS HERE
         ],
     ],
     'commands' => [
@@ -19,12 +17,12 @@ return [
     ],
     'libs' => [
         'model' => 'Models',
-        'contract' => 'Contracts'
+        'contract' => 'Contracts',
+        'schema' => 'Schemas'
     ],
     'database' => [
         'models' => [
-            'Employee'        => ModuleEmployeeModels\Employee\Employee::class,
-            'EmployeeService' => ModuleEmployeeModels\Employee\EmployeeService::class
+            // ADD YOUR MODELS HERE
         ]
     ]
 ];

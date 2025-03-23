@@ -25,13 +25,7 @@ class Employee extends PackageManagement implements ContractsEmployee
         ]
     ];
 
-    protected array $__resources = [
-        'view' => ViewEmployee::class,
-        'show' => ShowEmployee::class
-    ];
-
-    public function prepareStoreEmployee(?array $attributes = null): Model
-    {
+    public function prepareStoreEmployee(?array $attributes = null): Model{
         $attributes ??= request()->all();
         $people_schema = $this->schemaContract('people');
         if (isset($attributes['id'])) {
@@ -109,32 +103,18 @@ class Employee extends PackageManagement implements ContractsEmployee
         });
     }
 
-    public function storeEmployee(): array
-    {
+    public function storeEmployee(): array{
         return $this->transaction(function () {
             return $this->showEmployee($this->prepareStoreEmployee());
         });
     }
 
-    public function getEmployee(): mixed
-    {
+    public function getEmployee(): mixed{
         return static::$employee_model;
     }
 
-    public function addOrChange(?array $attributes = []): self
-    {
-        $employee = $this->updateOrCreate($attributes);
-        if (isset($attributes['parent']) && \method_exists($this->getModel(), 'sync')) {
-            $employee->sync($attributes['parent_model']);
-        }
-        static::$employee_model = $employee;
-        return $this;
-    }
-
-    public function employee(mixed $conditionals = null): Builder
-    {
+    public function employee(mixed $conditionals = null): Builder{
         $this->booting();
-        return $this->EmployeeModel()->conditionals($conditionals)
-            ->withParameters('or')->with($this->viewUsingRelation());
+        return $this->EmployeeModel()->conditionals($conditionals)->withParameters('or');
     }
 }

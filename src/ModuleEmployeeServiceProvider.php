@@ -21,9 +21,7 @@ class ModuleEmployeeServiceProvider extends BaseServiceProvider
                 '*',
                 'Services' => function () {
                     $this->binds([
-                        Contracts\ModuleEmployee::class => new ModuleEmployee,
-                        Contracts\Employee::class => new Schemas\Employee,
-                        Contracts\EmployeeService::class => new Schemas\EmployeeService
+                        Contracts\ModuleEmployee::class => ModuleEmployee::class
                     ]);
                 }
             ]);
