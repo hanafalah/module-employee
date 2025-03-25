@@ -7,18 +7,22 @@ use Hanafalah\ModuleEmployee\{
 };
 
 return [
-    'contracts' => [
-        'employee'         => Contracts\Employee::class,
-        'employee_service' => Contracts\EmployeeService::class,
-        'module_employee'  => Contracts\ModuleEmployee::class
+    'app' => [
+        'contracts' => [
+            // ADD YOUR CONTRACTS HERE
+        ],
     ],
     'commands' => [
         ModuleEmployeeCommands\InstallMakeCommand::class
     ],
+    'libs' => [
+        'model' => 'Models',
+        'contract' => 'Contracts',
+        'schema' => 'Schemas'
+    ],
     'database' => [
         'models' => [
-            'Employee'        => ModuleEmployeeModels\Employee\Employee::class,
-            'EmployeeService' => ModuleEmployeeModels\Employee\EmployeeService::class
+            // ADD YOUR MODELS HERE
         ]
     ]
 ];
