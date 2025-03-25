@@ -22,17 +22,9 @@ class EmployeeData extends Data{
         #[MapName('card_identity')]
         public ?CardIdentityData $card_identity = null,
 
-        #[MapInputName('nip')]
-        #[MapName('nip')]
-        public ?string $nip = null,
-        
-        #[MapInputName('sip')]
-        #[MapName('sip')]
-        public ?string $sip = null,
-
         #[MapInputName('profession_id')]
         #[MapName('profession_id')]
-        public mixed $profession_id = null,
+        public mixed $profession_id = null, 
 
         #[MapInputName('hired_at')]
         #[MapName('hired_at')]
