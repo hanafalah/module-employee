@@ -2,66 +2,58 @@
 
 namespace Hanafalah\ModuleEmployee\Data;
 
+use Carbon\Carbon;
 use Hanafalah\LaravelSupport\Supports\Data;
+use Hanafalah\ModuleUser\Data\UserData;
+use Hanafalah\ModuleWorkspace\Data\PeopleData;
+use Illuminate\Http\UploadedFile;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Attributes\Validation\BeforeOrEqual;
+use Spatie\LaravelData\Attributes\Validation\DateFormat;
 
 class EmployeeData extends Data{
-
-
-    {
-        "user": {
-          "username": "helper_ane1234",
-          "password": null,
-          "email": "anetr@mail.com",
-          "password_confirmation": null
-        },
-        "id": 223,
-        "nip": null,
-        "nik": "2364873264783264",
-        "first_name": "Helper",
-        "last_name": "Ane Transmedic",
-        "sip": null,
-        "hired_at": "2025-02-04",
-        "profession_id": 2,
-        "pob": "Bandung",
-        "dob": "1999-01-01",
-        "sex": 1,
-        "profile": null,
-        "roles": [
-          4
-        ],  
-        "consultation_service": {
-          "id": 542,
-          "tariff_components": [
-            {
-              "id": 1,
-              "name": "Tariff Layanan",
-              "price": 100000
-            }
-          ]
-        }
-      }
-
     public function __construct(
-        #[MapInputName('uuid')]
-        #[MapName('uuid')]
-        public ?string $uuid = null,
-    
-        #[MapInputName('name')]
-        #[MapName('name')]
-        public string $name,
+        #[MapInputName('id')]
+        #[MapName('id')]
+        public mixed $id = null,
+
+        #[MapInputName('nip')]
+        #[MapName('nip')]
+        public ?string $nip = null,
+        
+        #[MapInputName('sip')]
+        #[MapName('sip')]
+        public ?string $sip = null,
+
+        #[MapInputName('profession_id')]
+        #[MapName('profession_id')]
+        public mixed $profession_id = null,
+
+        #[MapInputName('hired_at')]
+        #[MapName('hired_at')]
+        #[BeforeOrEqual(Carbon::today())]
+        #[DateFormat(['Y-m-d', 'd-m-Y', 'Y-m', 'm-Y'])]
+        public ?Carbon $hired_at = null,
+
+        #[MapInputName('people')]
+        #[MapName('people')]
+        public PeopleData $people,
+
+        #[MapInputName('user')]
+        #[MapName('user')]
+        public ?UserData $user,
     
         #[MapInputName('status')]
         #[MapName('status')]
         public ?string $status = null,
 
-        #[MapInputName('address')]
-        #[MapName('address')]
-        public ?AddressData $address = null,
+        #[MapInputName('profile')]
+        #[MapName('profile')]
+        public string|UploadedFile|null $profile = null,
         
         #[MapInputName('props')]
         #[MapName('props')]
-        public ?WorkspacePropsData $props = null
+        public ?array $props = null
     ){}
 }

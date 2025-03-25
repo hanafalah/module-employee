@@ -4,14 +4,14 @@ namespace Hanafalah\ModuleEmployee\Enums\Employee;
 
 enum EmployeeStatus: int
 {
-    case DRAFT          = 0;
-    case ACTIVE         = 1;
-    case INACTIVE       = 2;
-    case DELETED        = 3;
-    case RETIRED        = 4;
-    case CONTRACT_ENDED = 5;
-    case INTERN         = 6;
-    case PROBATION      = 7;
-    case DECEASED       = 8;
-    case RESIGNED       = 9;
+    case DRAFT          = 'Draft';
+    case ACTIVE         = 'Active';
+    case INACTIVE       = 'Inactive';
+    case DELETED        = 'Deleted';
+    case RETIRED        = 'Retired';
+    case CONTRACT_ENDED = 'Contract Ended';
+    case INTERN         = 'Intern';
+    case PROBATION      = 'Probation';
+    case DECEASED       = 'Deceased';
+    case RESIGNED       = 'Resigned';
 }

@@ -41,8 +41,7 @@ class Employee extends BaseModel
         ];
     }
 
-    protected static function booted(): void
-    {
+    protected static function booted(): void{
         parent::booted();
         static::creating(function ($query) {
             if (!isset($query->status)) $query->status = EmployeeStatus::DRAFT->value;

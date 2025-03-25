@@ -32,16 +32,21 @@ return new class extends Migration
                 $profession = app(config('database.models.Profession', Profession::class));
 
                 $table->id();
+
                 $table->foreignIdFor($people::class)
                     ->nullable(false)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
-                $table->unsignedTinyInteger('status')->comment('see ' . EmployeeStatus::class)
-                    ->default(EmployeeStatus::DRAFT->value)
-                    ->nullable(false);
+
                 $table->foreignIdFor($profession::class)
                     ->nullable(false)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
-                $table->unsignedBigInteger('sallary')->default(0)
+
+                $table->string('hired_at',50)->nullable();
+
+                $table->string('profile',255)->nullable();
+
+                $table->enum('status',EmployeeStatus::cases())
+                    ->default(EmployeeStatus::DRAFT->value)
                     ->nullable(false);
                 $table->json('props')->nullable();
                 $table->timestamps();

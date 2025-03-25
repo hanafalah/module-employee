@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\{
 };
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
 use Hanafalah\ModuleEmployee\Contracts\Employee as ContractsEmployee;
+use Hanafalah\ModuleEmployee\Data\EmployeeData;
 use Hanafalah\ModuleEmployee\Resources\Employee\{ShowEmployee, ViewEmployee};
 
 class Employee extends PackageManagement implements ContractsEmployee
 {
     protected array $__guard   = ['id'];
-    protected array $__add     = ['profession_id', 'people_id', 'status', 'hired_at'];
+    protected array $__add     = ['profession_id', 'people_id', 'status', 'hired_at', 'profile'];
     protected string $__entity = 'Employee';
     public static $employee_model;
 
@@ -25,38 +26,22 @@ class Employee extends PackageManagement implements ContractsEmployee
         ]
     ];
 
-    public function prepareStoreEmployee(?array $attributes = null): Model{
-        $attributes ??= request()->all();
-        $people_schema = $this->schemaContract('people');
-        if (isset($attributes['id'])) {
-            $guard    = ['id' => $attributes['id']];
-            $employee = $this->EmployeeModel()->find($attributes['id']);
-            $attributes['people_id']    = $employee->people_id;
+    public function showUsingRelation(): array{
+        return [
+            'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
+            'userReference' => fn($q) => $q->with(['roles', 'user']),
+            'profession',
+            'cardIdentities'
+        ];
+    }
 
-            $people_attr = $attributes;
-            $people_attr['id'] = $employee->people_id;
 
-            $people = $people_schema->prepareStorePeople($people_attr);
-        } else {
-            $people = $people_schema->prepareStorePeople($attributes['people']);
-            $guard = ['people_id' => $attributes['people_id'] ?? $people->getKey()];
-        }
+    public function viewUsingRelation(): array{
+        return ['people.cardIdentities'];
+    }
 
-        if (!isset($attributes['is_profile'])) {
-            $employee = $this->employee()->updateOrCreate($guard, [
-                'sallary'       => $attributes['sallary'] ?? 0,
-                'profession_id' => $attributes['profession_id'] ?? null
-            ]);
-        }
-
-        $people->load('cardIdentities');
-        $employee->name     = $people->name;
-        $employee->hired_at = $attributes['hired_at'] ?? null;
-        $employee->nip      = $attributes['nip'] ?? null;
-        $employee->nik      = $attributes['nik'] ?? null;
-        $employee->sync($people, $people->toViewApi()->resolve());
-        $employee->save();
-        return static::$employee_model = $employee;
+    public function getEmployee(): mixed{
+        return static::$employee_model;
     }
 
     public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model
@@ -79,38 +64,50 @@ class Employee extends PackageManagement implements ContractsEmployee
             $model->load($this->showUsingRelation());
         }
         return static::$employee_model = $model;
-    }
+    }    
 
-    public function showUsingRelation(): array
-    {
-        return [
-            'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
-            'userReference' => fn($q) => $q->with(['roles', 'user']),
-            'profession',
-            'cardIdentities'
-        ];
-    }
-
-    public function viewUsingRelation(): array
-    {
-        return ['people.cardIdentities', 'userReference'];
-    }
-
-    public function showEmployee(?Model $model = null): array
-    {
-        return $this->transforming($this->__resources['show'], function () use ($model) {
+    public function showEmployee(?Model $model = null): array{
+        return $this->showEntityResource(function() use ($model){
             return $this->prepareShowEmployee($model);
         });
     }
 
-    public function storeEmployee(): array{
-        return $this->transaction(function () {
-            return $this->showEmployee($this->prepareStoreEmployee());
-        });
+    public function prepareStoreEmployee(EmployeeData $employee_dto): Model{
+        $people_schema = $this->schemaContract('people');
+        if (isset($employee_dto->id)) {
+            $guard                    = ['id' => $employee_dto->id];
+            $employee                 = $this->EmployeeModel()->findOrFail($employee_dto->id);
+            $employee_dto->people->id = $employee->people_id;
+
+            $people = $people_schema->prepareStorePeople($employee_dto->people);
+        } else {
+            $people = $people_schema->prepareStorePeople($employee_dto->people);
+            $guard = ['people_id' => $employee_dto->people->id ?? $people->getKey()];
+        }
+
+        $employee = $this->employee()->updateOrCreate($guard, [
+            'profession_id' => $employee_dto->profession_id,
+            'hired_at'      => $employee_dto->hired_at
+        ]);
+
+        $people ??= $employee->people;
+
+        $employee->sync($people);
+
+        $people->load('cardIdentities');
+        $employee->name     = $people->name;
+        $employee->hired_at = $attributes['hired_at'] ?? null;
+        $employee->nip      = $attributes['nip'] ?? null;
+        $employee->nik      = $attributes['nik'] ?? null;
+        $employee->sync($people, $people->toViewApi()->resolve());
+        $employee->save();
+        return static::$employee_model = $employee;
     }
 
-    public function getEmployee(): mixed{
-        return static::$employee_model;
+    public function storeEmployee(? EmployeeData $employee_dto = null): array{
+        return $this->transaction(function () use ($employee_dto) {
+            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? EmployeeData::from(request()->all())));
+        });
     }
 
     public function employee(mixed $conditionals = null): Builder{
