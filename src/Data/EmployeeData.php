@@ -18,6 +18,10 @@ class EmployeeData extends Data{
         #[MapName('id')]
         public mixed $id = null,
 
+        #[MapInputName('card_identity')]
+        #[MapName('card_identity')]
+        public ?CardIdentityData $card_identity = null,
+
         #[MapInputName('nip')]
         #[MapName('nip')]
         public ?string $nip = null,

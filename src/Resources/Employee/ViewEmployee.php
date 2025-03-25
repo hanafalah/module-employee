@@ -11,6 +11,10 @@ class ViewEmployee extends ApiResource
     {
         $arr = [
             'id'               => $this->id,
+            'card_identities'  => [
+                'nik'          => $this->nik,
+                'nip'          => $this->nip,
+            ],
             'people'           => $this->propResource($this->people, ViewPeople::class, ['id']),
             'status'           => $this->status,
             'profile'          => $this->profile ?? null,

@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\{
 };
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
 use Hanafalah\ModuleEmployee\Contracts\Employee as ContractsEmployee;
+use Hanafalah\ModuleEmployee\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Data\EmployeeData;
-use Hanafalah\ModuleEmployee\Resources\Employee\{ShowEmployee, ViewEmployee};
+use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
+use Illuminate\Support\Str;
 
 class Employee extends PackageManagement implements ContractsEmployee
 {
@@ -91,22 +93,37 @@ class Employee extends PackageManagement implements ContractsEmployee
         ]);
 
         $people ??= $employee->people;
-
         $employee->sync($people);
 
         $people->load('cardIdentities');
         $employee->name     = $people->name;
         $employee->hired_at = $attributes['hired_at'] ?? null;
-        $employee->nip      = $attributes['nip'] ?? null;
-        $employee->nik      = $attributes['nik'] ?? null;
-        $employee->sync($people, $people->toViewApi()->resolve());
+        if (isset($employee_dto->card_identity)){
+            $card_identity = $employee_dto->card_identity;
+            $this->employeeIdentity($employee, $card_identity,[
+                CardIdentity::SIP->value,
+                CardIdentity::SIK->value,
+                CardIdentity::NIP->value,
+                CardIdentity::STR->value,
+                CardIdentity::BPJS_KETENAGAKERJAAN->value
+            ]);
+        }
         $employee->save();
         return static::$employee_model = $employee;
     }
 
+    protected function employeeIdentity(Model &$employee, CardIdentityData $card_identity_dto, array $types){
+        foreach ($types as $type) {
+            $lower_type = Str::lower($type);
+            $value = $card_identity_dto->{$lower_type} ?? null;
+            if (isset($value)) $employee->setCardIdentity($type, $card_identity_dto->{$lower_type});
+            $employee->{$lower_type} = $value;
+        }
+    }
+
     public function storeEmployee(? EmployeeData $employee_dto = null): array{
         return $this->transaction(function () use ($employee_dto) {
-            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? EmployeeData::from(request()->all())));
+            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? $this->requestDTO(EmployeeData::class)));
         });
     }
 
