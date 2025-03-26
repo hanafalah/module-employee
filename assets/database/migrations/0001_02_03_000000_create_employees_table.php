@@ -38,14 +38,14 @@ return new class extends Migration
                     ->cascadeOnUpdate()->restrictOnDelete();
 
                 $table->foreignIdFor($profession::class)
-                    ->nullable(false)->index()
+                    ->nullable(true)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
 
                 $table->string('hired_at',50)->nullable();
 
                 $table->string('profile',255)->nullable();
 
-                $table->enum('status',EmployeeStatus::cases())
+                $table->enum('status',array_column(EmployeeStatus::cases(),'value'))
                     ->default(EmployeeStatus::DRAFT->value)
                     ->nullable(false);
                 $table->json('props')->nullable();

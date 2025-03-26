@@ -11,7 +11,6 @@ use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
 use Hanafalah\ModuleEmployee\Resources\Employee\ShowEmployee;
 use Hanafalah\ModuleEmployee\Resources\Employee\ViewEmployee;
 use Hanafalah\ModuleUser\Concerns\UserReference\HasUserReference;
-use Hanafalah\ModulePeople\Resources\People\ViewPeople;
 use Hanafalah\ModuleProfession\Concerns\Relation\HasProfession;
 
 class Employee extends BaseModel

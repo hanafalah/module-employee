@@ -46,8 +46,7 @@ class Employee extends PackageManagement implements ContractsEmployee
         return static::$employee_model;
     }
 
-    public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model
-    {
+    public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model{
         $attributes ??= request()->all();
 
         $model ??= $this->getEmployee();
@@ -86,7 +85,6 @@ class Employee extends PackageManagement implements ContractsEmployee
             $people = $people_schema->prepareStorePeople($employee_dto->people);
             $guard = ['people_id' => $employee_dto->people->id ?? $people->getKey()];
         }
-
         $employee = $this->employee()->updateOrCreate($guard, [
             'profession_id' => $employee_dto->profession_id,
             'hired_at'      => $employee_dto->hired_at
@@ -95,30 +93,27 @@ class Employee extends PackageManagement implements ContractsEmployee
         $people ??= $employee->people;
         $employee->sync($people);
 
-        $people->load('cardIdentities');
         $employee->name     = $people->name;
         $employee->hired_at = $attributes['hired_at'] ?? null;
         if (isset($employee_dto->card_identity)){
             $card_identity = $employee_dto->card_identity;
-            $this->employeeIdentity($employee, $card_identity,[
-                CardIdentity::SIP->value,
-                CardIdentity::SIK->value,
-                CardIdentity::NIP->value,
-                CardIdentity::STR->value,
-                CardIdentity::BPJS_KETENAGAKERJAAN->value
-            ]);
+            $this->employeeIdentity($employee, $card_identity,array_column(CardIdentity::cases(),'value'));
         }
         $employee->save();
+
+
         return static::$employee_model = $employee;
     }
 
     protected function employeeIdentity(Model &$employee, CardIdentityData $card_identity_dto, array $types){
+        $card_identity = [];
         foreach ($types as $type) {
             $lower_type = Str::lower($type);
             $value = $card_identity_dto->{$lower_type} ?? null;
             if (isset($value)) $employee->setCardIdentity($type, $card_identity_dto->{$lower_type});
-            $employee->{$lower_type} = $value;
+            $card_identity[$lower_type] = $value;
         }
+        $employee->setAttribute('card_identity',$card_identity);
     }
 
     public function storeEmployee(? EmployeeData $employee_dto = null): array{

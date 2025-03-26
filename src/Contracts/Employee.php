@@ -5,16 +5,17 @@ namespace Hanafalah\ModuleEmployee\Contracts;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Hanafalah\LaravelSupport\Contracts\DataManagement;
+use Hanafalah\ModuleEmployee\Data\EmployeeData;
 
 interface Employee extends DataManagement
 {
-    public function prepareStoreEmployee(?array $attributes = null): Model;
-    public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model;
     public function showUsingRelation(): array;
     public function viewUsingRelation(): array;
-    public function showEmployee(?Model $model = null): array;
-    public function storeEmployee(): array;
     public function getEmployee(): mixed;
-    public function addOrChange(?array $attributes = []): self;
+    public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model;
+    public function showEmployee(?Model $model = null): array;
+    public function prepareStoreEmployee(EmployeeData $employee_dto): Model;
+    public function storeEmployee(? EmployeeData $employee_dto = null): array;
     public function employee(mixed $conditionals = null): Builder;
+    
 }

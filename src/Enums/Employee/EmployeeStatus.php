@@ -2,7 +2,7 @@
 
 namespace Hanafalah\ModuleEmployee\Enums\Employee;
 
-enum EmployeeStatus: int
+enum EmployeeStatus: string
 {
     case DRAFT          = 'Draft';
     case ACTIVE         = 'Active';

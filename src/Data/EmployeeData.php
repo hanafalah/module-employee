@@ -2,10 +2,9 @@
 
 namespace Hanafalah\ModuleEmployee\Data;
 
-use Carbon\Carbon;
 use Hanafalah\LaravelSupport\Supports\Data;
 use Hanafalah\ModuleUser\Data\UserData;
-use Hanafalah\ModuleWorkspace\Data\PeopleData;
+use Hanafalah\ModulePeople\Data\PeopleData;
 use Illuminate\Http\UploadedFile;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
@@ -28,9 +27,8 @@ class EmployeeData extends Data{
 
         #[MapInputName('hired_at')]
         #[MapName('hired_at')]
-        #[BeforeOrEqual(Carbon::today())]
         #[DateFormat(['Y-m-d', 'd-m-Y', 'Y-m', 'm-Y'])]
-        public ?Carbon $hired_at = null,
+        public ?string $hired_at = null,
 
         #[MapInputName('people')]
         #[MapName('people')]
