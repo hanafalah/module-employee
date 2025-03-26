@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\{
     Model
 };
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
-use Hanafalah\ModuleEmployee\Contracts\Employee as ContractsEmployee;
+use Hanafalah\ModuleEmployee\Contracts\Schemas\Employee as ContractsEmployee;
 use Hanafalah\ModuleEmployee\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Data\EmployeeData;
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
@@ -52,7 +52,7 @@ class Employee extends PackageManagement implements ContractsEmployee
         $model ??= $this->getEmployee();
         if (!isset($model)) {
             $id   = $attributes['id'] ?? null;
-            $uuid = $attributes['uuid'] ?? null;
+        $uuid = $attributes['uuid'] ?? null;
             $is_valid = isset($id) || isset($uuid);
             if (!$is_valid) throw new \Exception('id or uuid not found');
 
@@ -95,13 +95,18 @@ class Employee extends PackageManagement implements ContractsEmployee
 
         $employee->name     = $people->name;
         $employee->hired_at = $attributes['hired_at'] ?? null;
+
+        //SET EMPLOYEE IDENTITIES
         if (isset($employee_dto->card_identity)){
             $card_identity = $employee_dto->card_identity;
             $this->employeeIdentity($employee, $card_identity,array_column(CardIdentity::cases(),'value'));
         }
         $employee->save();
 
-
+        //MANAGE EMPLOYEE ACCOUNT/USER ACCESS
+        if (isset($employee_dto->user)){
+            $this->schemaContract('user')->prepareStoreUser($employee_dto->user);
+        }
         return static::$employee_model = $employee;
     }
 

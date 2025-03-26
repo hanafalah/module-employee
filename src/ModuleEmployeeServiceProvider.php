@@ -26,6 +26,7 @@ class ModuleEmployeeServiceProvider extends BaseServiceProvider
                 }
             ]);
     }
+    
 
     /**
      * Get the base path of the package.

@@ -1,10 +1,10 @@
 <?php
 
-namespace Hanafalah\ModuleEmployee\Contracts;
+namespace Hanafalah\ModuleEmployee\Contracts\Schemas;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Hanafalah\LaravelSupport\Contracts\DataManagement;
+use Hanafalah\LaravelSupport\Contracts\Supports\DataManagement;
 use Hanafalah\ModuleEmployee\Data\EmployeeData;
 
 interface Employee extends DataManagement

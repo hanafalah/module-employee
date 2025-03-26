@@ -5,9 +5,8 @@ namespace Hanafalah\ModuleEmployee\Schemas;
 use Hanafalah\ModuleService\Schemas\Service;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Hanafalah\ModuleEmployee\Contracts\EmployeeService as ContractsEmployeeService;
+use Hanafalah\ModuleEmployee\Contracts\Schemas\EmployeeService as ContractsEmployeeService;
 use Hanafalah\ModuleEmployee\Resources\EmployeeService\{ViewEmployeeService, ShowEmployeeService};
-use Hanafalah\ModuleTransaction\Contracts\PriceComponent;
 
 class EmployeeService extends Service implements ContractsEmployeeService
 {
