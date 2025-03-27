@@ -8,7 +8,6 @@ use Hanafalah\ModulePeople\Data\PeopleData;
 use Illuminate\Http\UploadedFile;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Attributes\Validation\BeforeOrEqual;
 use Spatie\LaravelData\Attributes\Validation\DateFormat;
 
 class EmployeeData extends Data{

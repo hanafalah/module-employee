@@ -24,7 +24,7 @@ class Employee extends BaseModel
 
     protected $casts = [
         'name' => 'string'
-    ];
+    ]; 
 
     protected $prop_attributes = [
         'People' => [
