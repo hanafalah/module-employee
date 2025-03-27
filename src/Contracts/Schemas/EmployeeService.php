@@ -1,6 +1,6 @@
 <?php
 
-namespace Hanafalah\ModuleEmployee\Contracts;
+namespace Hanafalah\ModuleEmployee\Contracts\Schemas;
 
 use Hanafalah\ModuleService\Contracts\Service;
 

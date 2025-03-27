@@ -2,7 +2,7 @@
 
 namespace Hanafalah\ModuleEmployee\Resources\Employee;
 
-use Hanafalah\ModulePeople\Resources\People\ShowPeople;
+use Illuminate\Support\Str;
 
 class ShowEmployee extends ViewEmployee
 {
@@ -27,7 +27,7 @@ class ShowEmployee extends ViewEmployee
             'card_identities' => $this->relationValidation('cardIdentities', function () {
                 $cardIdentities = $this->cardIdentities;
                 return $cardIdentities->isEmpty() ? null : (object) $cardIdentities->mapWithKeys(function ($cardIdentity) {
-                    return [\strtoupper($cardIdentity->flag) => $cardIdentity->value];
+                    return [Str::lower($cardIdentity->flag) => $cardIdentity->value];
                 });
             }, true)
         ];
