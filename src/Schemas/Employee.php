@@ -4,6 +4,7 @@ namespace Hanafalah\ModuleEmployee\Schemas;
 
 use Illuminate\Database\Eloquent\{
     Builder,
+    Collection,
     Model
 };
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
@@ -15,8 +16,6 @@ use Illuminate\Support\Str;
 
 class Employee extends PackageManagement implements ContractsEmployee
 {
-    protected array $__guard   = ['id'];
-    protected array $__add     = ['profession_id', 'people_id', 'status', 'hired_at', 'profile'];
     protected string $__entity = 'Employee';
     public static $employee_model;
 
@@ -28,6 +27,10 @@ class Employee extends PackageManagement implements ContractsEmployee
         ]
     ];
 
+    public function viewUsingRelation(): array{
+        return ['people.cardIdentities'];
+    }
+
     public function showUsingRelation(): array{
         return [
             'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
@@ -35,11 +38,6 @@ class Employee extends PackageManagement implements ContractsEmployee
             'profession',
             'cardIdentities'
         ];
-    }
-
-
-    public function viewUsingRelation(): array{
-        return ['people.cardIdentities'];
     }
 
     public function getEmployee(): mixed{
@@ -110,6 +108,12 @@ class Employee extends PackageManagement implements ContractsEmployee
         return static::$employee_model = $employee;
     }
 
+    public function storeEmployee(? EmployeeData $employee_dto = null): array{
+        return $this->transaction(function () use ($employee_dto) {
+            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? $this->requestDTO(EmployeeData::class)));
+        });
+    }
+
     protected function employeeIdentity(Model &$employee, CardIdentityData $card_identity_dto, array $types){
         $card_identity = [];
         foreach ($types as $type) {
@@ -118,17 +122,22 @@ class Employee extends PackageManagement implements ContractsEmployee
             if (isset($value)) $employee->setCardIdentity($type, $card_identity_dto->{$lower_type});
             $card_identity[$lower_type] = $value;
         }
-        $employee->setAttribute('card_identity',$card_identity);
+        $employee->setAttribute('prop_card_identity',$card_identity);
     }
 
-    public function storeEmployee(? EmployeeData $employee_dto = null): array{
-        return $this->transaction(function () use ($employee_dto) {
-            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? $this->requestDTO(EmployeeData::class)));
+    public function prepareViewEmployeeList(): Collection{
+        return $this->employee()->with($this->viewUsingRelation())->get();
+    }
+
+    public function viewEmployeeList(): array{
+        return $this->viewEntityResource(function(){
+            return $this->prepareViewEmployeeList();
         });
     }
 
     public function employee(mixed $conditionals = null): Builder{
         $this->booting();
-        return $this->EmployeeModel()->conditionals($conditionals)->withParameters('or');
+        return $this->EmployeeModel()->conditionals($this->mergeCondition($conditionals))->withParameters('or')->orderBy('props->prop_people->name','asc');
     }
 }
+
