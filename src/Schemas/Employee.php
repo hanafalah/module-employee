@@ -2,6 +2,7 @@
 
 namespace Hanafalah\ModuleEmployee\Schemas;
 
+use Hanafalah\LaravelSupport\Data\PaginateData;
 use Illuminate\Database\Eloquent\{
     Builder,
     Collection,
@@ -12,6 +13,7 @@ use Hanafalah\ModuleEmployee\Contracts\Schemas\Employee as ContractsEmployee;
 use Hanafalah\ModuleEmployee\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Data\EmployeeData;
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class Employee extends PackageManagement implements ContractsEmployee
@@ -27,11 +29,11 @@ class Employee extends PackageManagement implements ContractsEmployee
         ]
     ];
 
-    public function viewUsingRelation(): array{
+    protected function viewUsingRelation(): array{
         return ['people.cardIdentities'];
     }
 
-    public function showUsingRelation(): array{
+    protected function showUsingRelation(): array{
         return [
             'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
             'userReference' => fn($q) => $q->with(['roles', 'user']),
@@ -71,6 +73,20 @@ class Employee extends PackageManagement implements ContractsEmployee
         });
     }
 
+    public function prepareShowProfile(?Model $model = null, ?array $attributes = null): Model{
+        $attributes ??= \request()->all();
+        if (!isset($attributes['uuid'])) throw new \Exception('uuid not found');
+        return static::$employee_model = $this->employee()->with($this->showUsingRelation())->whereHas('userReference',function($query) use ($attributes){
+            $query->uuid($attributes['uuid']);
+        })->firstOrFail();
+    }
+
+    public function showProfile(?Model $model = null): array{
+        return $this->showEntityResource(function() use ($model){
+            return $this->prepareShowProfile($model);
+        });
+    }
+
     public function prepareStoreEmployee(EmployeeData $employee_dto): Model{
         $people_schema = $this->schemaContract('people');
         if (isset($employee_dto->id)) {
@@ -103,6 +119,9 @@ class Employee extends PackageManagement implements ContractsEmployee
 
         //MANAGE EMPLOYEE ACCOUNT/USER ACCESS
         if (isset($employee_dto->user)){
+            $user_reference = &$employee_dto->user->user_reference;
+            $user_reference->reference_id   = $employee->getKey();
+            $user_reference->reference_type = $employee->getMorphClass();
             $this->schemaContract('user')->prepareStoreUser($employee_dto->user);
         }
         return static::$employee_model = $employee;
@@ -123,6 +142,16 @@ class Employee extends PackageManagement implements ContractsEmployee
             $card_identity[$lower_type] = $value;
         }
         $employee->setAttribute('prop_card_identity',$card_identity);
+    }
+
+    public function prepareViewEmployeePaginate(PaginateData $paginate_dto): LengthAwarePaginator{
+        return $this->employee()->with($this->viewUsingRelation())->paginate(...$paginate_dto->toArray())->appends(request()->all());
+    }
+
+    public function viewEmployeePaginate(? PaginateData $paginate_dto = null): array{
+        return $this->viewEntityResource(function() use ($paginate_dto){
+            return $this->prepareViewEmployeePaginate($paginate_dto ?? PaginateData::from(request()->all()));
+        });
     }
 
     public function prepareViewEmployeeList(): Collection{
