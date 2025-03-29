@@ -121,8 +121,10 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
             $card_identity = $employee_dto->card_identity;
             $this->employeeIdentity($employee, $card_identity,array_column(CardIdentity::cases(),'value'));
         }
-
-        $this->prepareStoreProfilePhoto($employee_dto->profile_dto ?? $this->requestDTO(ProfilePhotoData::class));
+        $this->prepareStoreProfilePhoto($employee_dto->profile_dto ?? $this->requestDTO(ProfilePhotoData::class,[
+            'id'      => $employee->getKey(),
+            'profile' => $employee_dto->profile
+        ]));
 
         return [$employee,$people];
     }
