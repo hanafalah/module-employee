@@ -98,13 +98,12 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         });
     }
 
-    protected function prepareEmployeePeople(EmployeeData $employee_dto): array{
+    protected function prepareEmployeePeople(EmployeeData|ProfileEmployeeData $employee_dto): array{
         $people_schema = $this->schemaContract('people');
         if (isset($employee_dto->id)) {
             $guard                    = ['id' => $employee_dto->id];
             $employee                 = $this->EmployeeModel()->findOrFail($employee_dto->id);
             $employee_dto->people->id = $employee->people_id;
-
             $people = $people_schema->prepareStorePeople($employee_dto->people);
         } else {
             $people = $people_schema->prepareStorePeople($employee_dto->people);
