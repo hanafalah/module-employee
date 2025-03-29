@@ -5,8 +5,9 @@ namespace Hanafalah\ModuleEmployee\Contracts\Schemas;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Hanafalah\LaravelSupport\Contracts\Supports\DataManagement;
-use Hanafalah\LaravelSupport\Data\PaginateData;
-use Hanafalah\ModuleEmployee\Data\EmployeeData;
+use Hanafalah\LaravelSupport\Contracts\Data\PaginateData;
+use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeData;
+use Hanafalah\ModuleEmployee\Contracts\Data\ProfileEmployeeData;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -19,11 +20,14 @@ interface Employee extends DataManagement
     public function showProfile(?Model $model = null): array;
     public function prepareStoreEmployee(EmployeeData $employee_dto): Model;
     public function storeEmployee(? EmployeeData $employee_dto = null): array;
+    public function prepareStoreProfile(ProfileEmployeeData $profile_employee_dto): Model;
+    public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array;
     public function prepareViewEmployeePaginate(PaginateData $paginate_dto): LengthAwarePaginator;
     public function viewEmployeePaginate(? PaginateData $paginate_dto = null): array;
     public function prepareViewEmployeeList(): Collection;
     public function viewEmployeeList(): array;
+    public function prepareDeleteEmployee(? array $attributes = null): bool;
+    public function deleteEmployee(): bool;
     public function employee(mixed $conditionals = null): Builder;
-    
     
 }

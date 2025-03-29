@@ -3,10 +3,11 @@
 namespace Hanafalah\ModuleEmployee\Data;
 
 use Hanafalah\LaravelSupport\Supports\Data;
+use Hanafalah\ModuleEmployee\Contracts\Data\CardIdentityData as DataCardIdentityData;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
 
-class CardIdentityData extends Data{
+class CardIdentityData extends Data implements DataCardIdentityData{
     public function __construct(
         #[MapInputName('nip')]
         #[MapName('nip')]
