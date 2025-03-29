@@ -19,12 +19,12 @@
         }
     },
     "require": {
-        "hanafalah/module-user": "dev-main",
-        "hanafalah/module-people": "dev-main",
-        "hanafalah/module-profession": "dev-main",
-        "hanafalah/module-service": "dev-main",
-        "hanafalah/laravel-support": "dev-main",
-        "hanafalah/module-transaction": "dev-main"
+        "hanafalah/module-user": "1.x",
+        "hanafalah/module-people": "1.x",
+        "hanafalah/module-profession": "1.x",
+        "hanafalah/module-service": "1.x",
+        "hanafalah/laravel-support": "1.x",
+        "hanafalah/module-transaction": "1.x"
     },
     "minimum-stability": "dev",
     "prefer-stable": false
