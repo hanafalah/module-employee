@@ -5,6 +5,7 @@ namespace Hanafalah\ModuleEmployee\Models\Employee;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
+use Hanafalah\LaravelSupport\Concerns\Support\HasProfilePhoto;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\ModuleCardIdentity\Concerns\HasCardIdentity;
 use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
@@ -17,7 +18,7 @@ class Employee extends BaseModel
 {
     use Notifiable, HasProps, HasProfession,
         HasUserReference, SoftDeletes,
-        HasCardIdentity;
+        HasCardIdentity, HasProfilePhoto;
 
     protected $list = ['id', 'people_id', 'status', 'profile', 'props'];
     protected $show = ['sallary', 'profession_id'];

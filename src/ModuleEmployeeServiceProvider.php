@@ -18,7 +18,13 @@ class ModuleEmployeeServiceProvider extends BaseServiceProvider
         $this->registerMainClass(ModuleEmployee::class)
             ->registerCommandService(Providers\CommandServiceProvider::class)
             ->registers([
-                '*'
+                '*',
+                'Service' => function(){
+                    $this->binds([
+                        Contracts\Schemas\ProfileEmployee::class => Schemas\Employee::class,
+                        Contracts\Schemas\ProfilePhoto::class => Schemas\Employee::class
+                    ]);
+                }
             ]);
     }
     
