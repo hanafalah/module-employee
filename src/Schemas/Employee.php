@@ -163,16 +163,34 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         });
     }
 
+    public function prepareShowProfilePhoto(? Model $model = null, array $attributes = null): Model{
+        $attributes ??= \request()->all();
+        $model ??= $this->getEmployee();
+        if (!isset($model)){
+            $id = $attributes['id'] ?? null;
+            if (!isset($id)) throw new \Exception('id or uuid not found');
+            $model = $this->getEmployeeByIdentifier($attributes)->firstOrFail();
+        }
+        return static::$employee_model = $model;
+    }
+
+    public function showProfilePhoto(? Model $model = null): array{
+        return $this->transforming($this->usingEntity()->getViewPhotoResource(),function() use ($model){
+            return $this->prepareShowProfilePhoto($model);
+        });
+    }
+
     public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model{
         if (!isset($profile_photo_dto->id)) throw new \Exception('id or uuid not found');
         $employee = $this->employee()->findOrFail($profile_photo_dto->id);
         $employee->setProfilePhoto($profile_photo_dto->profile);
+        $employee->save();
         return static::$employee_model = $employee;
     }
 
     public function storeProfilePhoto(?ProfilePhotoData $profile_photo_dto = null): array{
         return $this->transaction(function() use ($profile_photo_dto){
-            return $this->showPrfilePhoto($this->prepareStoreProfilePhoto($profile_photo_dto ?? $this->requestDTO(ProfilePhotoData::class)));
+            return $this->showProfilePhoto($this->prepareStoreProfilePhoto($profile_photo_dto ?? $this->requestDTO(ProfilePhotoData::class)));
         });
     }
 
