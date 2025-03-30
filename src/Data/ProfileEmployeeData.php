@@ -18,6 +18,10 @@ class ProfileEmployeeData extends Data implements DataProfileEmployeeData{
         #[MapName('id')]
         public mixed $id = null,
 
+        #[MapInputName('uuid')]
+        #[MapName('uuid')]
+        public ?string $uuid = null,
+
         #[MapInputName('people')]
         #[MapName('people')]
         public PeopleData $people,

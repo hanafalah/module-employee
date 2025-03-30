@@ -20,11 +20,12 @@ class Employee extends BaseModel
         HasUserReference, SoftDeletes,
         HasCardIdentity, HasProfilePhoto;
 
-    protected $list = ['id', 'people_id', 'status', 'profile', 'props'];
+    protected $list = ['id', 'uuid', 'people_id', 'status', 'profile', 'props'];
     protected $show = ['sallary', 'profession_id'];
 
     protected $casts = [
-        'name' => 'string'
+        'name' => 'string',
+        'uuid' => 'string'
     ]; 
 
     protected $prop_attributes = [
@@ -36,7 +37,8 @@ class Employee extends BaseModel
 
     public function getPropsQuery(): array{
         return [
-            'name' => 'props->prop_people->name'
+            'name' => 'props->prop_people->name',
+            'uuid' => 'props->uuid',
         ];
     }
 

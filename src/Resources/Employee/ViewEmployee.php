@@ -11,17 +11,14 @@ class ViewEmployee extends ApiResource
     {
         $arr = [
             'id'               => $this->id,
+            'uuid'             => $this->uuid,
             'card_identity'    => $this->prop_card_identity,
             'people'           => $this->propResource($this->people, ViewPeople::class, ['id']),
             'status'           => $this->status,
             'profile'          => $this->profile ?? null,
             'employee_service' => $this->relationValidation('employeeService', function () {
                 return $this->employeeService->toViewApi();
-            }),
-            'user_reference'   => $this->relationValidation('userReference', function () {
-                $userReference = $this->userReference;
-                return $userReference->toShowApi();
-            }),
+            }),            
             'profession'     => $this->relationValidation('profession', function () {
                 $profession = $this->profession;
                 return $profession->toShowApi();

@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Hanafalah\LaravelSupport\Contracts\Supports\DataManagement;
 use Hanafalah\LaravelSupport\Contracts\Data\PaginateData;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeData;
-use Hanafalah\ModuleEmployee\Contracts\Data\ProfileEmployeeData;
-use Hanafalah\ModuleEmployee\Contracts\Data\ProfilePhotoData;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -21,10 +19,6 @@ interface Employee extends DataManagement
     public function showProfile(?Model $model = null): array;
     public function prepareStoreEmployee(EmployeeData $employee_dto): Model;
     public function storeEmployee(? EmployeeData $employee_dto = null): array;
-    public function prepareStoreProfile(ProfileEmployeeData $profile_employee_dto): Model;
-    public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array;
-    public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model;
-    public function storeProfilePhoto(?ProfilePhotoData $profile_photo_dto = null): array;
     public function prepareViewEmployeePaginate(PaginateData $paginate_dto): LengthAwarePaginator;
     public function viewEmployeePaginate(? PaginateData $paginate_dto = null): array;
     public function prepareViewEmployeeList(): Collection;
