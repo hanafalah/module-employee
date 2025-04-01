@@ -5,7 +5,6 @@ namespace Hanafalah\ModuleEmployee\Data;
 use Hanafalah\LaravelSupport\Supports\Data;
 use Hanafalah\ModuleEmployee\Contracts\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeData as DataEmployeeData;
-use Hanafalah\ModuleUser\Contracts\Data\UserData;
 use Hanafalah\ModulePeople\Contracts\Data\PeopleData;
 use Hanafalah\ModuleUser\Contracts\Data\UserReferenceData;
 use Illuminate\Http\UploadedFile;
