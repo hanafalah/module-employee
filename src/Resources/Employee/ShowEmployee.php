@@ -24,6 +24,9 @@ class ShowEmployee extends ViewEmployee
                     'name' => $profession->name
                 ];
             }),
+            'user_reference'   => $this->relationValidation('userReference', function () {
+                return $this->userReference->toShowApi();
+            }),
             'card_identities' => $this->relationValidation('cardIdentities', function () {
                 $cardIdentities = $this->cardIdentities;
                 return $cardIdentities->isEmpty() ? null : (object) $cardIdentities->mapWithKeys(function ($cardIdentity) {

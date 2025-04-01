@@ -98,20 +98,27 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         });
     }
 
-    protected function prepareEmployeePeople(EmployeeData $employee_dto): array{
+    protected function prepareEmployeePeople(EmployeeData|ProfileEmployeeData $employee_dto): array{
         $people_schema = $this->schemaContract('people');
-        if (isset($employee_dto->id)) {
-            $guard                    = ['id' => $employee_dto->id];
-            $employee                 = $this->EmployeeModel()->findOrFail($employee_dto->id);
-            $employee_dto->people->id = $employee->people_id;
+        if (isset($employee_dto->id) || isset($employee_dto->uuid)){ 
+            $employee = $this->getEmployeeByIdentifier([
+                'id' => $employee_dto->id ?? null,
+                'uuid' => $employee_dto->uuid ?? null
+            ])->firstOrFail();            
+            
+            if (isset($employee_dto->uuid)) $guard = ['uuid' => $employee_dto->uuid];
+            if (isset($employee_dto->id))   $guard = ['id' => $employee_dto->id];
 
+            $employee_dto->people->id   = $employee->people_id;
+            $employee_dto->people->uuid = $employee->people->uuid;
             $people = $people_schema->prepareStorePeople($employee_dto->people);
         } else {
             $people = $people_schema->prepareStorePeople($employee_dto->people);
             $guard = ['people_id' => $employee_dto->people->id ?? $people->getKey()];
         }
         $employee = $this->employee()->updateOrCreate($guard);
-
+        $employee->refresh();        
+        
         $people ??= $employee->people;
 
         $employee->sync($people);
@@ -136,11 +143,12 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         $employee->save();
 
         //MANAGE EMPLOYEE ACCOUNT/USER ACCESS
-        if (isset($employee_dto->user)){
-            $user_reference = &$employee_dto->user->user_reference;
-            $user_reference->reference_id   = $employee->getKey();
-            $user_reference->reference_type = $employee->getMorphClass();
-            $this->schemaContract('user')->prepareStoreUser($employee_dto->user);
+        if (isset($employee_dto->user_reference)){
+            $user_reference_dto                 = &$employee_dto->user_reference;
+            $user_reference_dto->uuid           = $employee->uuid;
+            $user_reference_dto->reference_id   = $employee->getKey();
+            $user_reference_dto->reference_type = $employee->getMorphClass();
+            $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
         }
         return static::$employee_model = $employee;
     }
@@ -152,28 +160,58 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
     }
 
     public function prepareStoreProfile(ProfileEmployeeData $profile_employee_dto): Model{
-        if (!isset($profile_employee_dto->id)) throw new \Exception('id or uuid not found');
+        if (!isset($profile_employee_dto->id) && !isset($profile_employee_dto->uuid)) throw new \Exception('id or uuid not found');
 
         list($employee,$people) = $this->prepareEmployeePeople($profile_employee_dto);
         return static::$employee_model = $employee;
     }
-
     public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array{
+
         return $this->transaction(function() use ($profile_employee_dto){
             return $this->showEmployee($this->prepareStoreProfile($profile_employee_dto ?? $this->requestDTO(ProfileEmployeeData::class)));
         });
     }
 
+    public function prepareShowProfilePhoto(? Model $model = null, array $attributes = null): mixed{
+        $attributes ??= \request()->all();
+        $model ??= $this->getEmployee();
+        if (!isset($model)){
+            $id   = $attributes['id'] ?? null;
+            $uuid = $attributes['uuid'] ?? null;
+            if (!isset($id) && !isset($uuid)) throw new \Exception('id or uuid not found');
+            $model = $this->getEmployeeByIdentifier($attributes)->firstOrFail();
+        }
+        static::$employee_model = $model;
+        if (isset($attributes['is_direct_photo']) && $attributes['is_direct_photo']) {
+            return $model->getProfilePhoto();
+        }else{
+            return $model;
+        }
+    }
+
+    public function showProfilePhoto(? Model $model = null, bool $is_direct_photo = false): mixed{
+        if (!$is_direct_photo){
+            return $this->transforming($this->usingEntity()->getViewPhotoResource(),function() use ($model){
+                return $this->prepareShowProfilePhoto($model,request()->all());
+            });
+        }else{
+            $attributes = \request()->all();
+            $attributes['is_direct_photo'] = true;
+            return $this->prepareShowProfilePhoto($model,$attributes);
+        }
+    }
+
     public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model{
-        if (!isset($profile_photo_dto->id)) throw new \Exception('id or uuid not found');
-        $employee = $this->employee()->findOrFail($profile_photo_dto->id);
+        if (!isset($profile_photo_dto->id) && !isset($profile_photo_dto->uuid)) throw new \Exception('id or uuid not found');
+        $employee = $this->getEmployeeByIdentifier(['id' => $profile_photo_dto->id, 'uuid' => $profile_photo_dto->uuid])->firstOrFail();
         $employee->setProfilePhoto($profile_photo_dto->profile);
+        $employee->save();
         return static::$employee_model = $employee;
     }
 
     public function storeProfilePhoto(?ProfilePhotoData $profile_photo_dto = null): array{
         return $this->transaction(function() use ($profile_photo_dto){
-            return $this->showPrfilePhoto($this->prepareStoreProfilePhoto($profile_photo_dto ?? $this->requestDTO(ProfilePhotoData::class)));
+            return $this->showProfilePhoto($this->prepareStoreProfilePhoto($profile_photo_dto ?? $this->requestDTO(ProfilePhotoData::class)));
         });
     }
 
