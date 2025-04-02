@@ -3,11 +3,8 @@
 namespace Hanafalah\ModuleEmployee\Schemas;
 
 use Hanafalah\LaravelSupport\Contracts\Data\PaginateData;
-use Hanafalah\LaravelSupport\Supports\Data;
 use Illuminate\Database\Eloquent\{
-    Builder,
-    Collection,
-    Model
+    Builder, Collection, Model
 };
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\Employee as ContractsEmployee;

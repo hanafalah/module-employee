@@ -8,6 +8,7 @@ use Hanafalah\LaravelHasProps\Concerns\HasProps;
 use Hanafalah\LaravelSupport\Concerns\Support\HasProfilePhoto;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\ModuleCardIdentity\Concerns\HasCardIdentity;
+use Hanafalah\ModuleEmployee\Concerns\HasAccessAttendence;
 use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
 use Hanafalah\ModuleEmployee\Resources\Employee\ShowEmployee;
 use Hanafalah\ModuleEmployee\Resources\Employee\ViewEmployee;
@@ -18,10 +19,11 @@ class Employee extends BaseModel
 {
     use Notifiable, HasProps, HasProfession,
         HasUserReference, SoftDeletes,
-        HasCardIdentity, HasProfilePhoto;
+        HasCardIdentity, HasProfilePhoto,
+        HasAccessAttendence;
 
     protected $list = ['id', 'uuid', 'people_id', 'status', 'profile', 'props'];
-    protected $show = ['sallary', 'profession_id'];
+    protected $show = ['sallary', 'employee_type_id', 'profession_id'];
 
     protected $casts = [
         'name' => 'string',
@@ -67,4 +69,10 @@ class Employee extends BaseModel
     public function employeeServices(){
         return $this->morphManyModel('EmployeeService', 'reference');
     }
+
+    public function employeeType(){
+        return $this->belongsToModel('EmployeeType');
+    }
+    public function attendence(){return $this->hasOneModel('Attendence');}
+    public function attendences(){return $this->hasManyModel('Attendence');}
 }

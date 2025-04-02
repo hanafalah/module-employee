@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use Hanafalah\LaravelSupport\Concerns\NowYouSeeMe;
 use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
 use Hanafalah\ModuleEmployee\Models\Employee\Employee;
+use Hanafalah\ModuleEmployee\Models\EmployeeType\EmployeeType;
 use Hanafalah\ModulePeople\Models\People\People;
 use Hanafalah\ModuleProfession\Models\Profession\Profession;
 
@@ -28,8 +29,9 @@ return new class extends Migration
         $table_name = $this->__table->getTable();
         if (!$this->isTableExists()) {
             Schema::create($table_name, function (Blueprint $table) {
-                $people     = app(config('database.models.People', People::class));
-                $profession = app(config('database.models.Profession', Profession::class));
+                $people        = app(config('database.models.People', People::class));
+                $profession    = app(config('database.models.Profession', Profession::class));
+                $employee_type = app(config('database.models.EmployeeType', EmployeeType::class));
 
                 $table->id();
                 $table->string('uuid', 36)->nullable();
@@ -37,6 +39,10 @@ return new class extends Migration
                 $table->foreignIdFor($people::class)
                     ->nullable(false)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
+
+                $table->foreignIdFor($employee_type::class)->nullable(true)->after('people_id')
+                    ->constrained($employee_type->getTable(), 'id', 'eht_fk')
+                    ->restrictOnDelete()->cascadeOnUpdate();
 
                 $table->foreignIdFor($profession::class)
                     ->nullable(true)->index()
