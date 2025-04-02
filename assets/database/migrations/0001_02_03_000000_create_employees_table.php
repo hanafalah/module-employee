@@ -40,7 +40,7 @@ return new class extends Migration
                     ->nullable(false)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
 
-                $table->foreignIdFor($employee_type::class)->nullable(true)->after('people_id')
+                $table->foreignIdFor($employee_type::class)->nullable(true)
                     ->constrained($employee_type->getTable(), 'id', 'emp_fk')
                     ->restrictOnDelete()->cascadeOnUpdate();
 
