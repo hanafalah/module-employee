@@ -12,13 +12,13 @@ class EmployeeService extends Service
 {
     protected $table = 'services';
 
-    public function toViewApi()
+    public function getViewResource()
     {
-        return new ViewEmployeeService($this);
+        return ViewEmployeeService::class;
     }
 
-    public function toShowApi()
+    public function getShowResource()
     {
-        return new ShowEmployeeService($this);
+        return ShowEmployeeService::class;
     }
 }
