@@ -16,6 +16,7 @@ class ViewEmployee extends ApiResource
             'people'           => $this->propResource($this->people, ViewPeople::class, ['id']),
             'status'           => $this->status,
             'profile'          => $this->profile ?? null,
+            'sign'             => $this->sign ?? null,
             'employee_service' => $this->relationValidation('employeeService', function () {
                 return $this->employeeService->toViewApi();
             }),            

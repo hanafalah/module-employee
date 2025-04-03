@@ -163,7 +163,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         return static::$employee_model = $employee;
     }
     public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array{
-
         return $this->transaction(function() use ($profile_employee_dto){
             return $this->showEmployee($this->prepareStoreProfile($profile_employee_dto ?? $this->requestDTO(ProfileEmployeeData::class)));
         });
@@ -186,7 +185,8 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         }
     }
 
-    public function showProfilePhoto(? Model $model = null, bool $is_direct_photo = false): mixed{
+    public function showProfilePhoto(? Model $model = null): mixed{
+        $is_direct_photo = (strpos(request()->header('accept'), 'image/*') === 0);
         if (!$is_direct_photo){
             return $this->transforming($this->usingEntity()->getViewPhotoResource(),function() use ($model){
                 return $this->prepareShowProfilePhoto($model,request()->all());
@@ -201,7 +201,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
     public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model{
         if (!isset($profile_photo_dto->id) && !isset($profile_photo_dto->uuid)) throw new \Exception('id or uuid not found');
         $employee = $this->getEmployeeByIdentifier(['id' => $profile_photo_dto->id, 'uuid' => $profile_photo_dto->uuid])->firstOrFail();
-        $employee->setProfilePhoto($profile_photo_dto->profile);
+        $employee->profile = $employee->setProfilePhoto($profile_photo_dto->profile);
         $employee->save();
         return static::$employee_model = $employee;
     }
