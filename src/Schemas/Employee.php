@@ -14,6 +14,7 @@ use Hanafalah\ModuleEmployee\Contracts\Data\ProfileEmployeeData;
 use Hanafalah\ModuleEmployee\Contracts\Data\ProfilePhotoData;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfileEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfilePhoto;
+use Hanafalah\ModuleEmployee\Data\EmployeeData as DataEmployeeData;
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
@@ -151,7 +152,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
     }
 
     public function storeEmployee(? EmployeeData $employee_dto = null): array{
-        return $this->transaction(function () use ($employee_dto) {
+        return $this->transaction(function () use ($employee_dto) {            
             return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? $this->requestDTO(EmployeeData::class)));
         });
     }

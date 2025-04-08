@@ -13,25 +13,23 @@ use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\DateFormat;
 
 class ProfileEmployeeData extends Data implements DataProfileEmployeeData{
-    public function __construct(
-        #[MapInputName('id')]
-        #[MapName('id')]
-        public mixed $id = null,
+    #[MapInputName('id')]
+    #[MapName('id')]
+    public mixed $id = null;
 
-        #[MapInputName('uuid')]
-        #[MapName('uuid')]
-        public ?string $uuid = null,
+    #[MapInputName('uuid')]
+    #[MapName('uuid')]
+    public ?string $uuid = null;
 
-        #[MapInputName('people')]
-        #[MapName('people')]
-        public PeopleData $people,
+    #[MapInputName('people')]
+    #[MapName('people')]
+    public PeopleData $people;
 
-        #[MapInputName('profile')]
-        #[MapName('profile')]
-        public string|UploadedFile|null $profile = null,
+    #[MapInputName('profile')]
+    #[MapName('profile')]
+    public string|UploadedFile|null $profile = null;
         
-        #[MapInputName('props')]
-        #[MapName('props')]
-        public ?array $props = null
-    ){}
+    #[MapInputName('props')]
+    #[MapName('props')]
+    public ?array $props = null;
 }
