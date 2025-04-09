@@ -14,7 +14,6 @@ use Hanafalah\ModuleEmployee\Contracts\Data\ProfileEmployeeData;
 use Hanafalah\ModuleEmployee\Contracts\Data\ProfilePhotoData;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfileEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfilePhoto;
-use Hanafalah\ModuleEmployee\Data\EmployeeData as DataEmployeeData;
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
@@ -189,7 +188,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
     public function showProfilePhoto(? Model $model = null): mixed{
         $is_direct_photo = (strpos(request()->header('accept'), 'image/*') === 0);
         if (!$is_direct_photo){
-            return $this->transforming($this->usingEntity()->getViewPhotoResource(),function() use ($model){
+            return $this->transforming($this->usingEntity()->getViewFileResource(),function() use ($model){
                 return $this->prepareShowProfilePhoto($model,request()->all());
             });
         }else{
