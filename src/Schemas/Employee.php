@@ -168,7 +168,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         });
     }
 
-    public function prepareShowProfilePhoto(? Model $model = null, array $attributes = null): mixed{
+    public function prepareShowProfilePhoto(? Model $model = null, ?array $attributes = null): mixed{
         $attributes ??= \request()->all();
         $model ??= $this->getEmployee();
         if (!isset($model)){
