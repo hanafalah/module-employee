@@ -137,6 +137,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         list($employee,$people)  = $this->prepareEmployeePeople($employee_dto);
         $employee->hired_at      = $employee_dto->hired_at ?? null;        
         $employee->profession_id = $employee_dto->profession_id ?? null;        
+        $this->fillingProps($employee,$employee_dto->props);
         $employee->save();
 
         //MANAGE EMPLOYEE ACCOUNT/USER ACCESS

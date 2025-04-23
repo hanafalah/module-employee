@@ -35,7 +35,6 @@ class EmployeeData extends Data implements DataEmployeeData{
 
     #[MapInputName('hired_at')]
     #[MapName('hired_at')]
-    #[DateFormat(['Y-m-d', 'd-m-Y', 'Y-m', 'm-Y'])]
     public ?string $hired_at = null;
 
     #[MapInputName('people')]
