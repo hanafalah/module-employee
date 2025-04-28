@@ -22,6 +22,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
 {
     protected string $__entity = 'Employee';
     public static $employee_model;
+    protected mixed $__order_by_created_at = false; //asc, desc, false
 
     protected array $__cache = [
         'index' => [
