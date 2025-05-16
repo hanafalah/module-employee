@@ -175,7 +175,6 @@ class Employee extends PackageManagement implements ContractsEmployee, ProfileEm
     public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model{
         if (!isset($profile_photo_dto->id) && !isset($profile_photo_dto->uuid)) throw new \Exception('id or uuid not found');
         $employee = $this->getEmployeeByIdentifier(['id' => $profile_photo_dto->id, 'uuid' => $profile_photo_dto->uuid])->firstOrFail();
-        dd();
         $employee->profile = $employee->setProfilePhoto($profile_photo_dto->profile);
         $employee->save();
         return static::$employee_model = $employee;
