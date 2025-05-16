@@ -18,7 +18,7 @@ use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
-class Employee extends PackageManagement implements ContractsEmployee,ProfileEmployee,ProfilePhoto
+class Employee extends PackageManagement implements ContractsEmployee, ProfileEmployee, ProfilePhoto
 {
     protected string $__entity = 'Employee';
     public static $employee_model;
@@ -31,23 +31,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
             'duration' => 60 * 24 * 7
         ]
     ];
-
-    protected function viewUsingRelation(): array{
-        return ['people.cardIdentities'];
-    }
-
-    protected function showUsingRelation(): array{
-        return [
-            'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
-            'userReference' => fn($q) => $q->with(['roles', 'user']),
-            'profession',
-            'cardIdentities'
-        ];
-    }
-
-    public function getEmployee(): mixed{
-        return static::$employee_model;
-    }
 
     public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model{
         $attributes ??= request()->all();
@@ -74,12 +57,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
                 ->when(isset($uuid), function ($query) use ($uuid) {
                     $query->whereHas('userReference', fn($q) => $q->uuid($uuid));
                 });
-    }
-
-    public function showEmployee(?Model $model = null): array{
-        return $this->showEntityResource(function() use ($model){
-            return $this->prepareShowEmployee($model);
-        });
     }
 
     public function prepareShowProfile(?Model $model = null, ?array $attributes = null): Model{
@@ -152,18 +129,13 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         return static::$employee_model = $employee;
     }
 
-    public function storeEmployee(? EmployeeData $employee_dto = null): array{
-        return $this->transaction(function () use ($employee_dto) {            
-            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? $this->requestDTO(EmployeeData::class)));
-        });
-    }
-
     public function prepareStoreProfile(ProfileEmployeeData $profile_employee_dto): Model{
         if (!isset($profile_employee_dto->id) && !isset($profile_employee_dto->uuid)) throw new \Exception('id or uuid not found');
 
         list($employee,$people) = $this->prepareEmployeePeople($profile_employee_dto);
         return static::$employee_model = $employee;
     }
+
     public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array{
         return $this->transaction(function() use ($profile_employee_dto){
             return $this->showEmployee($this->prepareStoreProfile($profile_employee_dto ?? $this->requestDTO(ProfileEmployeeData::class)));
@@ -203,6 +175,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
     public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model{
         if (!isset($profile_photo_dto->id) && !isset($profile_photo_dto->uuid)) throw new \Exception('id or uuid not found');
         $employee = $this->getEmployeeByIdentifier(['id' => $profile_photo_dto->id, 'uuid' => $profile_photo_dto->uuid])->firstOrFail();
+        dd();
         $employee->profile = $employee->setProfilePhoto($profile_photo_dto->profile);
         $employee->save();
         return static::$employee_model = $employee;
@@ -225,26 +198,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         $employee->setAttribute('prop_card_identity',$card_identity);
     }
 
-    public function prepareViewEmployeePaginate(PaginateData $paginate_dto): LengthAwarePaginator{
-        return $this->employee()->with($this->viewUsingRelation())->paginate(...$paginate_dto->toArray())->appends(request()->all());
-    }
-
-    public function viewEmployeePaginate(? PaginateData $paginate_dto = null): array{
-        return $this->viewEntityResource(function() use ($paginate_dto){            
-            return $this->prepareViewEmployeePaginate($paginate_dto ?? $this->requestDTO(PaginateData::class));
-        });
-    }
-
-    public function prepareViewEmployeeList(): Collection{
-        return $this->employee()->with($this->viewUsingRelation())->get();
-    }
-
-    public function viewEmployeeList(): array{
-        return $this->viewEntityResource(function(){
-            return $this->prepareViewEmployeeList();
-        });
-    }
-
     public function prepareDeleteEmployee(? array $attributes = null): bool{
         $attributes ??= request()->all();
         if (!isset($attributes['id']) && !isset($attributes['uuid'])){
@@ -264,15 +217,10 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         return $employee->delete();
     }
 
-    public function deleteEmployee(): bool{
-        return $this->transaction(function(){
-            return $this->prepareDeleteEmployee();
-        });
-    }
-
     public function employee(mixed $conditionals = null): Builder{
         $this->booting();
-        return $this->EmployeeModel()->conditionals($this->mergeCondition($conditionals))->withParameters('or')->orderBy('props->prop_people->name','asc');
+        return $this->EmployeeModel()->conditionals($this->mergeCondition($conditionals))
+                    ->withParameters('or')->orderBy('props->prop_people->name','asc');
     }
 }
 

@@ -14,16 +14,20 @@ use Hanafalah\ModuleEmployee\Resources\Employee\ShowEmployee;
 use Hanafalah\ModuleEmployee\Resources\Employee\ViewEmployee;
 use Hanafalah\ModuleUser\Concerns\UserReference\HasUserReference;
 use Hanafalah\ModuleProfession\Concerns\Relation\HasProfession;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class Employee extends BaseModel
 {
-    use Notifiable, HasProps, HasProfession,
+    use HasUlids, Notifiable, HasProps, HasProfession,
         HasUserReference, SoftDeletes,
         HasCardIdentity, HasProfilePhoto,
         HasAccessAttendence;
 
-    protected $list = ['id', 'uuid', 'people_id', 'status', 'profile', 'props'];
-    protected $show = ['sallary', 'employee_type_id', 'profession_id'];
+    public $incrementing  = false;
+    protected $primaryKey = 'id';
+    protected $keyType    = 'string';
+    protected $list       = ['id', 'uuid', 'people_id', 'status', 'profile', 'props'];
+    protected $show       = ['sallary', 'employee_type_id', 'profession_id'];
 
     protected $casts = [
         'name' => 'string',
@@ -49,6 +53,19 @@ class Employee extends BaseModel
         static::creating(function ($query) {
             if (!isset($query->status)) $query->status = EmployeeStatus::DRAFT->value;
         });
+    }
+
+    public function viewUsingRelation(): array{
+        return ['people.cardIdentities'];
+    }
+
+    public function showUsingRelation(): array{
+        return [
+            'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
+            'userReference' => fn($q) => $q->with(['roles', 'user']),
+            'profession',
+            'cardIdentities'
+        ];
     }
 
     public function getShowResource(){
