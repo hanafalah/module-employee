@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class Employee extends BaseModel
 {
-    use HasUlids, Notifiable, HasProps, HasProfession,
+    use Notifiable, HasProps, HasProfession,
         HasUserReference, SoftDeletes,
         HasCardIdentity, HasProfilePhoto,
         HasAccessAttendence;
