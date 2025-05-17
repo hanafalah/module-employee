@@ -8,7 +8,7 @@ use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
 use Hanafalah\ModuleEmployee\Models\Employee\Employee;
 use Hanafalah\ModuleEmployee\Models\EmployeeType\EmployeeType;
 use Hanafalah\ModulePeople\Models\People\People;
-use Hanafalah\ModuleProfession\Models\Profession\Profession;
+use Hanafalah\ModuleProfession\Models\{Profession\Profession, Occupation\Occupation};
 
 return new class extends Migration
 {
@@ -31,6 +31,7 @@ return new class extends Migration
             Schema::create($table_name, function (Blueprint $table) {
                 $people        = app(config('database.models.People', People::class));
                 $profession    = app(config('database.models.Profession', Profession::class));
+                $occupation    = app(config('database.models.Occupation', Occupation::class));
                 $employee_type = app(config('database.models.EmployeeType', EmployeeType::class));
 
                 $table->id();
@@ -45,6 +46,10 @@ return new class extends Migration
                     ->restrictOnDelete()->cascadeOnUpdate();
 
                 $table->foreignIdFor($profession::class)
+                    ->nullable(true)->index()
+                    ->cascadeOnUpdate()->restrictOnDelete();
+            
+                $table->foreignIdFor($occupation::class)
                     ->nullable(true)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
 
