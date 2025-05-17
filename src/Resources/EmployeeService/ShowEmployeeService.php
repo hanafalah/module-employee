@@ -4,7 +4,7 @@ namespace Hanafalah\ModuleEmployee\Resources\EmployeeService;
 
 use Hanafalah\ModuleService\Resources\ShowService;
 
-class ShowEmployeeService extends ShowService
+class ShowEmployeeService extends ViewEmployeeService
 {
 
     public function toArray(\Illuminate\Http\Request $request): array
@@ -16,8 +16,8 @@ class ShowEmployeeService extends ShowService
                 });
             })
         ];
-        $view = $this->resolveNow(new ViewEmployeeService($this));
-        $arr = array_merge(parent::toArray($request), $view, $arr);
+        $show = $this->resolveNow(new ShowService($this));
+        $arr = array_merge(parent::toArray($request), $show, $arr);
 
         return $arr;
     }
