@@ -13,7 +13,7 @@ class ViewEmployee extends ApiResource
             'id'               => $this->id,
             'uuid'             => $this->uuid,
             'card_identity'    => $this->prop_card_identity,
-            'people'           => $this->propResource($this->people, ViewPeople::class, ['id']),
+            'people'           => $this->prop_people,
             'status'           => $this->status,
             'profile'          => $this->profile ?? null,
             'sign'             => $this->sign ?? null,
