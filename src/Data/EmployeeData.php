@@ -64,4 +64,28 @@ class EmployeeData extends Data implements DataEmployeeData{
     #[MapInputName('props')]
     #[MapName('props')]
     public ?array $props = null;
+
+    public static function after(EmployeeData $data): EmployeeData{
+        $data->props['prop_profession'] = [
+            'id'   => $data->profession_id ?? null,
+            'name' => null
+        ];
+
+        $new = static::new();
+        if (isset($data->props['prop_profession']['id']) && !isset($data->props['prop_profession']['name'])){
+            $profession = $new->ProfessionModel()->findOrFail($data->props['prop_profession']['id']);
+            $data->props['prop_profession']['name'] = $profession->name;
+        }
+
+        $data->props['prop_occupation'] = [
+            'id'   => $data->occupation_id ?? null,
+            'name' => null
+        ];
+
+        if (isset($data->props['prop_occupation']['id']) && !isset($data->props['prop_occupation']['name'])){
+            $occupation = $new->OccupationModel()->findOrFail($data->props['prop_occupation']['id']);
+            $data->props['prop_occupation']['name'] = $occupation->name;
+        }
+        return $data;
+    }
 }
