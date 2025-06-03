@@ -10,7 +10,6 @@ class ShowEmployee extends ViewEmployee
     public function toArray(\Illuminate\Http\Request $request): array
     {
         $arr = [
-            'hired_at'   => $this->hired_at,
             'people'     => $this->relationValidation('people', function () {
                 return $this->people->toShowApi();
             }),

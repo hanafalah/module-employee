@@ -32,7 +32,10 @@ class Employee extends BaseModel
 
     protected $casts = [
         'name' => 'string',
-        'uuid' => 'string'
+        'uuid' => 'string',
+        'occupation_name' => 'string',
+        'profession_name' => 'string',
+        'employee_type_name' => 'string',
     ]; 
 
     protected $prop_attributes = [
@@ -46,6 +49,9 @@ class Employee extends BaseModel
         return [
             'name' => 'props->prop_people->name',
             'uuid' => 'props->uuid',
+            'occupation_name' => 'props->prop_occupation->name',
+            'profession_name' => 'props->prop_profession->name',
+            'employee_type_name' => 'props->prop_employee_type->name'
         ];
     }
 
