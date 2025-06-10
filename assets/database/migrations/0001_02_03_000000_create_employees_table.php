@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Schema;
 use Hanafalah\LaravelSupport\Concerns\NowYouSeeMe;
 use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
 use Hanafalah\ModuleEmployee\Models\Employee\Employee;
+use Hanafalah\ModuleEmployee\Models\EmployeeType\EmployeeType;
 use Hanafalah\ModulePeople\Models\People\People;
-use Hanafalah\ModuleProfession\Models\Profession\Profession;
+use Hanafalah\ModuleProfession\Models\{Profession\Profession, Occupation\Occupation};
 
 return new class extends Migration
 {
@@ -28,16 +29,27 @@ return new class extends Migration
         $table_name = $this->__table->getTable();
         if (!$this->isTableExists()) {
             Schema::create($table_name, function (Blueprint $table) {
-                $people     = app(config('database.models.People', People::class));
-                $profession = app(config('database.models.Profession', Profession::class));
+                $people        = app(config('database.models.People', People::class));
+                $profession    = app(config('database.models.Profession', Profession::class));
+                $occupation    = app(config('database.models.Occupation', Occupation::class));
+                $employee_type = app(config('database.models.EmployeeType', EmployeeType::class));
 
                 $table->id();
+                $table->string('uuid', 36)->nullable();
 
                 $table->foreignIdFor($people::class)
                     ->nullable(false)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
 
+                $table->foreignIdFor($employee_type::class)->nullable(true)
+                    ->constrained($employee_type->getTable(), 'id', 'emp_fk')
+                    ->restrictOnDelete()->cascadeOnUpdate();
+
                 $table->foreignIdFor($profession::class)
+                    ->nullable(true)->index()
+                    ->cascadeOnUpdate()->restrictOnDelete();
+            
+                $table->foreignIdFor($occupation::class)
                     ->nullable(true)->index()
                     ->cascadeOnUpdate()->restrictOnDelete();
 
