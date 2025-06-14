@@ -3,7 +3,6 @@
 namespace Hanafalah\ModuleEmployee\Resources\Employee;
 
 use Hanafalah\LaravelSupport\Resources\ApiResource;
-use Hanafalah\ModulePeople\Resources\People\ViewPeople;
 
 class ViewEmployee extends ApiResource
 {
@@ -23,6 +22,8 @@ class ViewEmployee extends ApiResource
             }),            
             'profession'       => $this->prop_profession,
             'occupation'       => $this->prop_occupation,
+            'created_at'       => $this->created_at,
+            'updated_at'       => $this->updated_at
         ];
 
         return $arr;
