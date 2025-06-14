@@ -10,6 +10,9 @@ class ShowEmployee extends ViewEmployee
     public function toArray(\Illuminate\Http\Request $request): array
     {
         $arr = [
+            'occupation' => $this->relationValidation('occupation', function () {
+                return $this->occupation->toViewApi();
+            },$this->prop_occupation),
             'people'     => $this->relationValidation('people', function () {
                 return $this->people->toShowApi();
             }),
@@ -24,7 +27,7 @@ class ShowEmployee extends ViewEmployee
                 return $cardIdentities->isEmpty() ? null : (object) $cardIdentities->mapWithKeys(function ($cardIdentity) {
                     return [Str::lower($cardIdentity->flag) => $cardIdentity->value];
                 });
-            }, true)
+            })
         ];
 
         $arr = array_merge(parent::toArray($request), $arr);
