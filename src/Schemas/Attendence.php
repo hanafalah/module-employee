@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\{
     Collection,
     Model
 };
-use Hanafalah\LaravelSupport\Supports\PackageManagement;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\Attendence as ContractsAttendence;
 use Hanafalah\ModuleEmployee\Contracts\Data\AttendenceData;
+use Hanafalah\ModuleEmployee\Supports\BaseModuleEmployee;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class Attendence extends PackageManagement implements ContractsAttendence
+class Attendence extends BaseModuleEmployee implements ContractsAttendence
 {
     protected string $__entity = 'Attendence';
     public static $attendence_model;

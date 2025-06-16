@@ -2,112 +2,78 @@
 
 namespace Hanafalah\ModuleEmployee\Schemas;
 
-use Hanafalah\LaravelSupport\Contracts\Data\PaginateData;
 use Illuminate\Database\Eloquent\{
     Builder,
-    Collection,
     Model
 };
-use Hanafalah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\ModuleEmployee\Supports\BaseModuleEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\Shift as ContractsShift;
 use Hanafalah\ModuleEmployee\Contracts\Data\ShiftData;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Hanafalah\ModuleEmployee\Contracts\Data\ShiftHasScheduleData;
+use Illuminate\Support\Str;
 
-class Shift extends PackageManagement implements ContractsShift
+class Shift extends BaseModuleEmployee implements ContractsShift
 {
     protected string $__entity = 'Shift';
     public static $shift_model;
 
-    protected function viewUsingRelation(): array{
-        return [];
-    }
+    protected array $__cache = [
+        'index' => [
+            'name'     => 'shift',
+            'tags'     => ['shift', 'shift-index'],
+            'duration' => 24 * 60
+        ]
+    ];
 
-    protected function showUsingRelation(): array{
-        return [
-        ];
-    }
-
-    public function getShift(): mixed{
-        return static::$shift_model;
-    }
-
-    public function prepareShowShift(?Model $model = null, ?array $attributes = null): Model{
-        $attributes ??= request()->all();
-
-        $model ??= $this->getShift();
-        if (!isset($model)) {
-            $id   = $attributes['id'] ?? null;
-            if (!isset($id)) throw new \Exception('id not found');
-
-            $model = $this->shiftMethod()->with($this->showUsingRelation())->findOrFail($id);            
-        } else {
-            $model->load($this->showUsingRelation());
-        }
-        return static::$shift_model = $model;
-    }    
-
-    public function showShift(?Model $model = null): array{
-        return $this->showEntityResource(function() use ($model){
-            return $this->prepareShowShift($model);
-        });
+    public function camelEntity(): string{
+        return Str::camel($this->__entity).'Common';
     }
 
     public function prepareStoreShift(ShiftData $shift_dto): Model{
-        $shift = $this->shiftMethod()->updateOrCreate([
+        $off_days = $shift_dto->off_days ?? [];
+        $off_days = $this->mustArray($off_days);
+        $shift = $this->usingEntity()->updateOrCreate([
             'id' => $shift_dto->id ?? null
         ],[
-            'name'       => $shift_dto->name,            
-            'start_at'   => $shift_dto->start_at,
-            'end_at'     => $shift_dto->end_at,
-            'event_type' => $shift_dto->event_type ?? null, 
-            'event_id'   => $shift_dto->event_id ?? null
+            'name'          => $shift_dto->name,            
+            'off_days'      => json_encode($off_days),
+            'event_type'    => $shift_dto->event_type ?? null, 
+            'event_id'      => $shift_dto->event_id ?? null
         ]);
+
+        if (isset($shift_dto->shift_has_schedules)){
+            foreach ($shift_dto->shift_has_schedules as $shift_has_schedule){
+                $shift_has_schedule->shift_id = $shift->getKey();
+                $this->schemaContract('shift_has_schedule')->prepareStoreShiftHasSchedule($shift_has_schedule);
+            }
+        }
+
+        if (isset($shift_dto->shift_schedule_ids)){
+            foreach ($shift_dto->shift_schedule_ids as $shift_schedule_id){
+                $shift_schedule_model = $this->schemaContract('shift_schedule')->shiftSchedule()->findOrFail($shift_schedule_id);
+                $this->schemaContract('shift_has_schedule')->prepareStoreShiftHasSchedule($this->requestDTO(ShiftHasScheduleData::class,[
+                    'shift_id' => $shift->getKey(),
+                    'shift_schedule_id' => $shift_schedule_model->id
+                ])); 
+            }
+        }
+
+        if (isset($shift_dto->shift_schedules)){
+            foreach ($shift_dto->shift_schedules as $shift_schedule){
+                $shift_schedule_model = $this->schemaContract('shift_schedule')->prepareStoreShiftSchedule($shift_schedule);
+                $this->schemaContract('shift_has_schedule')->prepareStoreShiftHasSchedule($this->requestDTO(ShiftHasScheduleData::class,[
+                    'shift_id' => $shift->getKey(),
+                    'shift_schedule_id' => $shift_schedule_model->id
+                ])); 
+            }
+        }
+        $this->fillingProps($shift,$shift_dto->props);
+        $shift->save();
         return static::$shift_model = $shift;
     }
 
-    public function storeShift(? ShiftData $shift_dto = null): array{
-        return $this->transaction(function () use ($shift_dto) {
-            return $this->showShift($this->prepareStoreShift($shift_dto ?? $this->requestDTO(ShiftData::class)));
-        });
-    }
-
-    public function prepareViewShiftPaginate(PaginateData $paginate_dto): LengthAwarePaginator{
-        return $this->shiftMethod()->with($this->viewUsingRelation())->paginate(...$paginate_dto->toArray())->appends(request()->all());
-    }
-
-    public function viewShiftPaginate(? PaginateData $paginate_dto = null): array{
-        return $this->viewEntityResource(function() use ($paginate_dto){            
-            return $this->prepareViewShiftPaginate($paginate_dto ?? $this->requestDTO(PaginateData::class));
-        });
-    }
-
-    public function prepareViewShiftList(): Collection{
-        return $this->shiftMethod()->with($this->viewUsingRelation())->get();
-    }
-
-    public function viewShiftList(): array{
-        return $this->viewEntityResource(function(){
-            return $this->prepareViewShiftList();
-        });
-    }
-
-    public function prepareDeleteShift(? array $attributes = null): bool{
-        $attributes ??= request()->all();
-        if (!isset($attributes['id'])) throw new \Exception('id not found');
-
-        $shift = $this->shiftMethod()->findOrFail($attributes['id']);
-        return $shift->delete();
-    }
-
-    public function deleteShift(): bool{
-        return $this->transaction(function(){
-            return $this->prepareDeleteShift();
-        });
-    }
-
-    public function shiftMethod(mixed $conditionals = null): Builder{
-        $this->booting();
-        return $this->ShiftModel()->conditionals($this->mergeCondition($conditionals))->withParameters()->orderBy('name','asc');
+    public function shiftCommon(mixed $conditionals = null): Builder{
+        return $this->generalSchemaModel();
     }
 }
 

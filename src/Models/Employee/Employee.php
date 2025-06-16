@@ -28,7 +28,7 @@ class Employee extends BaseModel
     protected $primaryKey = 'id';
     protected $keyType    = 'string';
     protected $list       = ['id', 'uuid', 'people_id', 'status', 'profile', 'props'];
-    protected $show       = ['sallary', 'employee_type_id', 'profession_id', 'occupation_id'];
+    protected $show       = ['sallary', 'employee_type_id', 'shift_id', 'profession_id', 'occupation_id'];
 
     protected $casts = [
         'name' => 'string',

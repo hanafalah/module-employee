@@ -2,11 +2,10 @@
 
 namespace Hanafalah\ModuleEmployee\Schemas;
 
-use Hanafalah\LaravelSupport\Contracts\Data\PaginateData;
 use Illuminate\Database\Eloquent\{
-    Builder, Collection, Model
+    Builder, Model
 };
-use Hanafalah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\ModuleEmployee\Supports\BaseModuleEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\Employee as ContractsEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeData;
@@ -15,10 +14,9 @@ use Hanafalah\ModuleEmployee\Contracts\Data\ProfilePhotoData;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfileEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfilePhoto;
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
-class Employee extends PackageManagement implements ContractsEmployee, ProfileEmployee, ProfilePhoto
+class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileEmployee, ProfilePhoto
 {
     protected string $__entity = 'Employee';
     public static $employee_model;
@@ -41,7 +39,6 @@ class Employee extends PackageManagement implements ContractsEmployee, ProfileEm
             $uuid = $attributes['uuid'] ?? null;
             $is_valid = isset($id) || isset($uuid);
             if (!$is_valid) throw new \Exception('id or uuid not found');
-
             $model = $this->getEmployeeByIdentifier($attributes)->firstOrFail();            
         } else {
             $model->load($this->showUsingRelation());
@@ -114,8 +111,9 @@ class Employee extends PackageManagement implements ContractsEmployee, ProfileEm
     public function prepareStoreEmployee(EmployeeData $employee_dto): Model{
         list($employee,$people)  = $this->prepareEmployeePeople($employee_dto);
         $employee->hired_at      = $employee_dto->hired_at ?? null;        
-        $employee->profession_id = $employee_dto->profession_id ?? null;        
-        $employee->occupation_id = $employee_dto->occupation_id ?? null;        
+        $employee->profession_id = $employee_dto->profession_id ?? null;
+        $employee->occupation_id = $employee_dto->occupation_id ?? null;
+        $employee->shift_id      = $employee_dto->shift_id ?? null;
         $this->fillingProps($employee,$employee_dto->props);
         $employee->save();
 

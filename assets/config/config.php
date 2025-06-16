@@ -7,6 +7,7 @@ use Hanafalah\ModuleEmployee\{
 };
 
 return [
+    'namespace' => 'Hanafalah\ModuleEmployee',
     'app' => [
         'contracts' => [
             // ADD YOUR CONTRACTS HERE

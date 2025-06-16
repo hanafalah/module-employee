@@ -5,6 +5,7 @@ namespace Hanafalah\ModuleEmployee\Data;
 use Carbon\Carbon;
 use Hanafalah\LaravelSupport\Supports\Data;
 use Hanafalah\ModuleEmployee\Contracts\Data\ShiftData as DataShiftData;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\DateFormat;
@@ -18,15 +19,9 @@ class ShiftData extends Data implements DataShiftData{
     #[MapName('name')]
     public string $name;
 
-    #[MapInputName('start_at')]
-    #[MapName('start_at')]
-    #[DateFormat('Y-m-d H:i:s')]
-    public ?string $start_at;
-
-    #[MapInputName('end_at')]
-    #[MapName('end_at')]
-    #[DateFormat('Y-m-d H:i:s')]
-    public ?string $end_at;
+    #[MapInputName('off_days')]
+    #[MapName('off_days')]
+    public ?array $off_days = null;
 
     #[MapInputName('event_type')]
     #[MapName('event_type')]
@@ -36,14 +31,21 @@ class ShiftData extends Data implements DataShiftData{
     #[MapName('event_id')]
     public mixed $event_id = null;
 
-    public static function after(ShiftData $data): ShiftData{
-        if (isset($data->start_at)){
-            $data->start_at = Carbon::parse($data->start_at)->toDateTimeString();
-        }
-    
-        if (isset($data->end_at)){
-            $data->end_at = Carbon::parse($data->end_at)->toDateTimeString();
-        }
-        return $data;
-    }
+    #[MapInputName('shift_schedule_ids')]
+    #[MapName('shift_schedule_ids')]
+    public ?array $shift_schedule_ids = null;
+
+    #[MapInputName('shift_schedules')]
+    #[MapName('shift_schedules')]
+    #[DataCollectionOf(ShiftScheduleData::class)]
+    public ?array $shift_schedules = null;
+
+    #[MapInputName('shift_has_schedules')]
+    #[MapName('shift_has_schedules')]
+    #[DataCollectionOf(ShiftHasScheduleData::class)]
+    public ?array $shift_has_schedules = null;
+
+    #[MapInputName('props')]
+    #[MapName('props')]
+    public ?array $props = null;
 }

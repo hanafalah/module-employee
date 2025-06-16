@@ -3,39 +3,34 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Hanafalah\LaravelSupport\Concerns\NowYouSeeMe;
-use Hanafalah\ModuleEmployee\Models\Attendence\EmployeeShift;
-use Hanafalah\ModuleEmployee\Models\Attendence\Shift;
-use Hanafalah\ModuleEmployee\Models\Employee\Employee;
+use Hanafalah\ModuleEmployee\Models\{
+    EmployeeStuff
+};
 
 return new class extends Migration
 {
-    use NowYouSeeMe;
+    use Hanafalah\LaravelSupport\Concerns\NowYouSeeMe;
 
     private $__table;
 
     public function __construct()
     {
-        $this->__table = app(config('database.models.EmployeeShift', EmployeeShift::class));
+        $this->__table = app(config('database.models.EmployeeStuff', EmployeeStuff::class));
     }
 
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up(): void
     {
         $table_name = $this->__table->getTable();
         if (!$this->isTableExists()) {
             Schema::create($table_name, function (Blueprint $table) {
-                $employee = app(config('database.models.Employee', Employee::class));
-                $shift    = app(config('database.models.Shift', Shift::class));
-
                 $table->ulid('id')->primary();
-                $table->foreignIdFor($employee::class)
-                      ->index()->constrained()->cascadeOnDelete();
-                $table->foreignIdFor($shift::class)
-                      ->index()->constrained()->cascadeOnDelete();
-                $table->date('shift_date');
+                $table->string('name', 255)->nullable(false);
+                $table->string('flag', 100)->nullable(false);
                 $table->json('props')->nullable();
                 $table->timestamps();
                 $table->softDeletes();

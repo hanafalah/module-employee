@@ -30,7 +30,7 @@ return new class extends Migration
                 $employee = app(config('database.models.Employee', Employee::class));
                 $employee_type = app(config('database.models.EmployeeType',EmployeeType::class));
 
-                $table->id();
+                $table->ulid('id')->primary();
                 $table->foreignIdFor($employee::class)->nullable(false)
                       ->constrained()->cascadeOnDelete()->cascadeOnUpdate();
                 $table->foreignIdFor($employee_type::class)->nullable(false)

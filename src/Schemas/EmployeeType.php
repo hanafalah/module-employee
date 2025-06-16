@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\{
     Collection,
     Model
 };
-use Hanafalah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\ModuleEmployee\Supports\BaseModuleEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\EmployeeType as ContractsEmployeeType;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeTypeData;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class EmployeeType extends PackageManagement implements ContractsEmployeeType
+class EmployeeType extends BaseModuleEmployee implements ContractsEmployeeType
 {
     protected string $__entity = 'EmployeeType';
     public static $employee_type_model;

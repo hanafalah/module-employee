@@ -16,13 +16,21 @@ class Shift extends BaseModel{
     protected $keyType    = 'string';
     protected $primaryKey = 'id';
     protected $list       = [
-        'id', 'name','event_type', 'event_id', 'start_at', 'end_at', 'props'
+        'id', 'name', 'employee_type', 'employee_id', 'event_type', 'event_id', 'off_days', 'props'
     ];
 
     protected $casts = [
         'start_at' => 'datetime',
         'end_at'   => 'datetime'
     ];
+
+    public function viewUsingRelation(): array{
+        return ['shiftSchedules'];
+    }
+
+    public function showUsingRelation(): array{
+        return ['shiftSchedules'];
+    }
 
     public function getViewResource(){
         return ViewShift::class;
@@ -32,5 +40,14 @@ class Shift extends BaseModel{
         return ShowShift::class;
     }
 
+    public function employee(){return $this->morphTo();}
+    public function shiftSchedules(){
+        return $this->belongsToManyModel(
+            'ShiftSchedule',
+            'ShiftHasSchedule',
+            'shift_id',
+            'shift_schedule_id'
+        );
+    }
     public function event(){return $this->morphTo();}
 }

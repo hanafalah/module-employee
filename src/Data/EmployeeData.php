@@ -49,6 +49,10 @@ class EmployeeData extends Data implements DataEmployeeData{
     #[MapName('employee_type')]
     public ?EmployeeTypeData $employee_type;
 
+    #[MapInputName('shift_id')]
+    #[MapName('shift_id')]
+    public mixed $shift_id = null;
+
     #[MapInputName('status')]
     #[MapName('status')]
     public ?string $status = null;
@@ -85,6 +89,16 @@ class EmployeeData extends Data implements DataEmployeeData{
         if (isset($data->props['prop_occupation']['id']) && !isset($data->props['prop_occupation']['name'])){
             $occupation = $new->OccupationModel()->findOrFail($data->props['prop_occupation']['id']);
             $data->props['prop_occupation']['name'] = $occupation->name;
+        }
+
+        $data->props['prop_shift'] = [
+            'id'   => $data->shift_id ?? null,
+            'name' => null
+        ];
+
+        if (isset($data->props['prop_shift']['id']) && !isset($data->props['prop_shift']['name'])){
+            $shift_model = $new->ShiftModel()->findOrFail($data->shift_id);
+            $data->props['prop_shift']['name'] = $shift_model->name;
         }
         return $data;
     }

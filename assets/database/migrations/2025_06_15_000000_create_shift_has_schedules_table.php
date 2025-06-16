@@ -3,40 +3,39 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Hanafalah\LaravelSupport\Concerns\NowYouSeeMe;
+use Hanafalah\ModuleEmployee\Models\Attendence\{
+    ShiftHasSchedule
+};
 use Hanafalah\ModuleEmployee\Models\Attendence\Shift;
-use Hanafalah\ModuleEmployee\Models\Employee\Employee;
 
 return new class extends Migration
 {
-    use NowYouSeeMe;
+    use Hanafalah\LaravelSupport\Concerns\NowYouSeeMe;
 
     private $__table;
 
     public function __construct()
     {
-        $this->__table = app(config('database.models.Shift', Shift::class));
+        $this->__table = app(config('database.models.ShiftHasSchedule', ShiftHasSchedule::class));
     }
 
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up(): void
     {
         $table_name = $this->__table->getTable();
         if (!$this->isTableExists()) {
             Schema::create($table_name, function (Blueprint $table) {
-                $table->ulid('id')->primary();
-                $table->string('name',150);
-                $table->timestamp('start_at');
-                $table->timestamp('end_at');
-                $table->string('event_type',50)->nullable();
-                $table->string('event_id',36)->nullable();
-                $table->json('props')->nullable();
-                $table->softDeletes();
-                $table->timestamps();
+                $shift = app(config('database.models.Shift', Shift::class));
 
-                $table->index(['event_type', 'event_id'], 'shift_event');
+                $table->ulid('id')->primary();
+                $table->string('', 255)->nullable(false);
+                $table->json('props')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
             });
         }
     }

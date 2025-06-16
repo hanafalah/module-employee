@@ -11,9 +11,13 @@ class ViewShift extends ApiResource
         $arr = [
             'id'        => $this->id,
             'name'      => $this->name,
-            'start_at'  => $this->start_at,
-            'end_at'    => $this->end_at,
-            'event'     => $this->prop_event
+            'off_days'  => json_decode($this->off_days ?? []),
+            'event'     => $this->prop_event,
+            'shift_schedules' => $this->relationValidation('shiftSchedules',function(){
+                return $this->shiftSchedules->transform(function($shift_schedule){
+                    return $shift_schedule->toViewApi();
+                });
+            })
         ];
         return $arr;
     }
