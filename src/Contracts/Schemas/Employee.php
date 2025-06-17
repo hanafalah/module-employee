@@ -39,7 +39,4 @@ interface Employee extends DataManagement
     public function storeProfilePhoto(?ProfilePhotoData $profile_photo_dto = null): array;
     public function prepareDeleteEmployee(? array $attributes = null): bool;
     public function employee(mixed $conditionals = null): Builder;
-
-    
-    
 }

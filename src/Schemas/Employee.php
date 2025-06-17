@@ -97,8 +97,11 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         $employee->name = $people->name;
         //SET EMPLOYEE IDENTITIES
         if (isset($employee_dto->card_identity)){
-            $card_identity = $employee_dto->card_identity;
-            $this->employeeIdentity($employee, $card_identity,array_column(CardIdentity::cases(),'value'));
+            $this->employeeIdentity(
+                $employee, 
+                $employee_dto->card_identity,
+                array_column(config('module-employee.employee_identities'),'value')
+            );
         }
         $this->prepareStoreProfilePhoto($employee_dto->profile_dto ?? $this->requestDTO(ProfilePhotoData::class,[
             'id'      => $employee->getKey(),
