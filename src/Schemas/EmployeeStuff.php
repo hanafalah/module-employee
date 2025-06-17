@@ -38,7 +38,6 @@ class EmployeeStuff extends BaseModuleEmployee implements ContractsEmployeeStuff
         $employee_stuff = $this->usingEntity()->updateOrCreate(...$create);
         $this->fillingProps($employee_stuff,$employee_stuff_dto->props);
         $employee_stuff->save();
-        $this->forgetTagsEntity('employee_stuff');
         return static::$employee_stuff_model = $employee_stuff;
     }
 }

@@ -52,7 +52,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         return $this->employee()->with($this->showUsingRelation())
                 ->when(isset($id), fn($q) => $q->where('id', $id))
                 ->when(isset($uuid), function ($query) use ($uuid) {
-                    $query->whereHas('userReference', fn($q) => $q->uuid($uuid));
+                    return $query->whereHas('userReference', fn($q) => $q->uuid($uuid));
                 });
     }
 
@@ -74,7 +74,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         $people_schema = $this->schemaContract('people');
         if (isset($employee_dto->id) || isset($employee_dto->uuid)){ 
             $employee = $this->getEmployeeByIdentifier([
-                'id' => $employee_dto->id ?? null,
+                'id'   => $employee_dto->id ?? null,
                 'uuid' => $employee_dto->uuid ?? null
             ])->firstOrFail();            
             
@@ -107,7 +107,6 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
             'id'      => $employee->getKey(),
             'profile' => $employee_dto->profile
         ]));
-
         return [$employee,$people];
     }
 
@@ -119,14 +118,14 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         $employee->shift_id      = $employee_dto->shift_id ?? null;
         $this->fillingProps($employee,$employee_dto->props);
         $employee->save();
-
         //MANAGE EMPLOYEE ACCOUNT/USER ACCESS
         if (isset($employee_dto->user_reference)){
-            $user_reference_dto                 = &$employee_dto->user_reference;
+            $user_reference_dto                 = $employee_dto->user_reference;
+            $user_reference_dto->id             = $employee->userReference->getKey();
             $user_reference_dto->uuid           = $employee->uuid;
             $user_reference_dto->reference_id   = $employee->getKey();
             $user_reference_dto->reference_type = $employee->getMorphClass();
-            $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
+            $user_reference = $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
         }
         return static::$employee_model = $employee;
     }
