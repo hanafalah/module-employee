@@ -11,6 +11,7 @@ class ViewEmployee extends ApiResource
         $arr = [
             'id'               => $this->id,
             'uuid'             => $this->uuid,
+            'name'             => $this->name,
             'hired_at'         => $this->hired_at,
             'card_identity'    => $this->prop_card_identity,
             'people'           => $this->prop_people,

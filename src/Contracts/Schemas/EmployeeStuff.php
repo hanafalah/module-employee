@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @see \Hanafalah\ModuleEmployee\Schemas\EmployeeStuff
  * @method mixed export(string $type)
+ * @method self setParamLogic(string $logic, bool $search_value = false, ?array $optionals = [])
  * @method self conditionals(mixed $conditionals)
  * @method array updateEmployeeStuff(?EmployeeStuffData $employee_stuff_dto = null)
  * @method Model prepareUpdateEmployeeStuff(EmployeeStuffData $employee_stuff_dto)

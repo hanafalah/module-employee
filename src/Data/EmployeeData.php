@@ -10,12 +10,15 @@ use Hanafalah\ModuleUser\Contracts\Data\UserReferenceData;
 use Illuminate\Http\UploadedFile;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Attributes\Validation\DateFormat;
 
 class EmployeeData extends Data implements DataEmployeeData{
     #[MapInputName('id')]
     #[MapName('id')]
     public mixed $id = null;
+
+    #[MapInputName('name')]
+    #[MapName('name')]
+    public ?string $name = null;
 
     #[MapInputName('uuid')]
     #[MapName('uuid')]
@@ -70,6 +73,7 @@ class EmployeeData extends Data implements DataEmployeeData{
     public ?array $props = null;
 
     public static function after(EmployeeData $data): EmployeeData{
+        $data->name = $data->people->name;
         $data->props['prop_profession'] = [
             'id'   => $data->profession_id ?? null,
             'name' => null

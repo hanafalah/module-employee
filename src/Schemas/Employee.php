@@ -72,6 +72,9 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
 
     protected function prepareEmployeePeople(EmployeeData|ProfileEmployeeData $employee_dto): array{
         $people_schema = $this->schemaContract('people');
+        $add = [
+            'name' => $employee_dto->name
+        ];
         if (isset($employee_dto->id) || isset($employee_dto->uuid)){ 
             $employee = $this->getEmployeeByIdentifier([
                 'id'   => $employee_dto->id ?? null,
@@ -88,7 +91,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
             $people = $people_schema->prepareStorePeople($employee_dto->people);
             $guard = ['people_id' => $employee_dto->people->id ?? $people->getKey()];
         }
-        $employee = $this->employee()->updateOrCreate($guard);
+        $employee = $this->employee()->updateOrCreate($guard,$add);
         $employee->refresh();        
         
         $people ??= $employee->people;

@@ -38,6 +38,7 @@ return new class extends Migration
 
                 $table->ulid('id')->primary();
                 $table->string('uuid', 36)->nullable();
+                $table->string('name',100)->nullable(false);
 
                 $table->foreignIdFor($people::class)
                     ->nullable(false)->index()

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @see \Hanafalah\ModuleEmployee\Schemas\ShiftSchedule
  * @method mixed export(string $type)
+ * @method self setParamLogic(string $logic, bool $search_value = false, ?array $optionals = [])
  * @method self conditionals(mixed $conditionals)
  * @method array updateShiftSchedule(?ShiftScheduleData $shift_schedule_dto = null)
  * @method Model prepareUpdateShiftSchedule(ShiftScheduleData $shift_schedule_dto)

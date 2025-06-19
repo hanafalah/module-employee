@@ -14,6 +14,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @see \Hanafalah\ModuleFunding\Schemas\Employee
+ * @method self setParamLogic(string $logic, bool $search_value = false, ?array $optionals = [])
  * @method self conditionals(mixed $conditionals)
  * @method bool deleteEmployee()
  * @method mixed getEmployee()

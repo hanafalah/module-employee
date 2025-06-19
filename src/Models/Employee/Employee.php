@@ -12,6 +12,7 @@ use Hanafalah\ModuleEmployee\Concerns\HasAccessAttendence;
 use Hanafalah\ModuleEmployee\Enums\Employee\EmployeeStatus;
 use Hanafalah\ModuleEmployee\Resources\Employee\ShowEmployee;
 use Hanafalah\ModuleEmployee\Resources\Employee\ViewEmployee;
+use Hanafalah\ModulePeople\Resources\People\ViewPeople;
 use Hanafalah\ModuleProfession\Concerns\Relation\HasOccupation;
 use Hanafalah\ModuleUser\Concerns\UserReference\HasUserReference;
 use Hanafalah\ModuleProfession\Concerns\Relation\HasProfession;
@@ -27,7 +28,7 @@ class Employee extends BaseModel
     public $incrementing  = false;
     protected $primaryKey = 'id';
     protected $keyType    = 'string';
-    protected $list       = ['id', 'uuid', 'people_id', 'status', 'profile', 'props'];
+    protected $list       = ['id', 'uuid', 'name', 'people_id', 'status', 'profile', 'props'];
     protected $show       = ['sallary', 'employee_type_id', 'shift_id', 'profession_id', 'occupation_id'];
 
     protected $casts = [
@@ -39,15 +40,11 @@ class Employee extends BaseModel
     ]; 
 
     protected $prop_attributes = [
-        'People' => [
-            'name','first_name','last_name','nik','sex',
-            'dob','pob'
-        ]
+        'People' => ViewPeople::class
     ];
 
     public function getPropsQuery(): array{
         return [
-            'name' => 'props->prop_people->name',
             'uuid' => 'props->uuid',
             'occupation_name' => 'props->prop_occupation->name',
             'profession_name' => 'props->prop_profession->name',
