@@ -3,14 +3,11 @@
 namespace Hanafalah\ModuleEmployee\Data;
 
 use Hanafalah\LaravelSupport\Supports\Data;
-use Hanafalah\ModuleEmployee\Contracts\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Contracts\Data\ProfileEmployeeData as DataProfileEmployeeData;
-use Hanafalah\ModuleUser\Contracts\Data\UserData;
 use Hanafalah\ModulePeople\Contracts\Data\PeopleData;
 use Illuminate\Http\UploadedFile;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Attributes\Validation\DateFormat;
 
 class ProfileEmployeeData extends Data implements DataProfileEmployeeData{
     #[MapInputName('id')]
@@ -20,6 +17,10 @@ class ProfileEmployeeData extends Data implements DataProfileEmployeeData{
     #[MapInputName('uuid')]
     #[MapName('uuid')]
     public ?string $uuid = null;
+
+    #[MapInputName('name')]
+    #[MapName('name')]
+    public ?string $name = null;
 
     #[MapInputName('people')]
     #[MapName('people')]
