@@ -33,4 +33,9 @@ class ProfileEmployeeData extends Data implements DataProfileEmployeeData{
     #[MapInputName('props')]
     #[MapName('props')]
     public ?array $props = null;
+
+    public static function after(self $data): self{
+        $data->name = $data->people->name;
+        return $data;
+    }
 }
