@@ -2,9 +2,9 @@
 
 namespace Hanafalah\ModuleEmployee\Resources\EmployeeStuff;
 
-use Hanafalah\LaravelSupport\Resources\ApiResource;
+use Hanafalah\LaravelSupport\Resources\Unicode\ViewUnicode;
 
-class ViewEmployeeStuff extends ApiResource
+class ViewEmployeeStuff extends ViewUnicode
 {
   /**
    * Transform the resource into an array.
@@ -14,13 +14,8 @@ class ViewEmployeeStuff extends ApiResource
    */
   public function toArray(\Illuminate\Http\Request $request): array
   {
-    $arr = [
-      'id'   => $this->id,
-      'name' => $this->name,
-      'flag' => $this->flag,
-      'created_at' => $this->created_at,
-      'updated_at' => $this->updated_at,
-    ];
+    $arr = [];
+    $arr = $this->mergeArray(parent::toArray($request),$arr);
     return $arr;
   }
 }

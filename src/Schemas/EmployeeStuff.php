@@ -2,17 +2,16 @@
 
 namespace Hanafalah\ModuleEmployee\Schemas;
 
-use Illuminate\Database\Eloquent\Builder;
+use Hanafalah\LaravelSupport\Schemas\Unicode;
 use Illuminate\Database\Eloquent\Model;
-use Hanafalah\ModuleEmployee\{
-    Supports\BaseModuleEmployee
-};
 use Hanafalah\ModuleEmployee\Contracts\Schemas\EmployeeStuff as ContractsEmployeeStuff;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeStuffData;
+use Illuminate\Database\Eloquent\Builder;
 
-class EmployeeStuff extends BaseModuleEmployee implements ContractsEmployeeStuff
+class EmployeeStuff extends Unicode implements ContractsEmployeeStuff
 {
     protected string $__entity = 'EmployeeStuff';
+    protected $__config_name = 'module-employee';
     public static $employee_stuff_model;
     //protected mixed $__order_by_created_at = false; //asc, desc, false
 
@@ -25,19 +24,11 @@ class EmployeeStuff extends BaseModuleEmployee implements ContractsEmployeeStuff
     ];
 
     public function prepareStoreEmployeeStuff(EmployeeStuffData $employee_stuff_dto): Model{
-        $add = [
-            'name' => $employee_stuff_dto->name,
-            'flag' => $employee_stuff_dto->flag
-        ];
-        if (isset($employee_stuff_dto->id)){
-            $guard  = ['id' => $employee_stuff_dto->id];
-            $create = [$guard, $add];
-        }else{
-            $create = [$add];
-        }
-        $employee_stuff = $this->usingEntity()->updateOrCreate(...$create);
-        $this->fillingProps($employee_stuff,$employee_stuff_dto->props);
-        $employee_stuff->save();
+        $employee_stuff = $this->prepareStoreUnicode($employee_stuff_dto);
         return static::$employee_stuff_model = $employee_stuff;
+    }
+
+    public function employeeStuff(mixed $conditionals = null): Builder{
+        return $this->unicode($conditionals);
     }
 }

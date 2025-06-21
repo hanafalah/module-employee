@@ -20,7 +20,8 @@ class ShiftScheduleData extends EmployeeStuffData implements DataShiftScheduleDa
     public string $end_at;
     
     public static function before(array &$attributes){
-        $attributes['flag'] = 'ShiftSchedule';
+        $attributes['flag'] ??= 'ShiftSchedule';
+        parent::before($attributes);
     }
 
     public static function after(mixed $data): ShiftScheduleData{

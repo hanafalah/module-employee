@@ -2,6 +2,6 @@
 
 namespace Hanafalah\ModuleEmployee\Contracts\Data;
 
-use Spatie\LaravelData\Contracts\BaseData;
+use Hanafalah\LaravelSupport\Contracts\Data\UnicodeData;
 
-interface EmployeeStuffData extends BaseData {}
+interface EmployeeStuffData extends UnicodeData {}
