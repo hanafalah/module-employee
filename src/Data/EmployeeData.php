@@ -6,6 +6,7 @@ use Hanafalah\LaravelSupport\Supports\Data;
 use Hanafalah\ModuleEmployee\Contracts\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeData as DataEmployeeData;
 use Hanafalah\ModulePeople\Contracts\Data\PeopleData;
+use Hanafalah\ModuleProfession\Contracts\Data\OccupationData;
 use Hanafalah\ModuleUser\Contracts\Data\UserReferenceData;
 use Illuminate\Http\UploadedFile;
 use Spatie\LaravelData\Attributes\MapInputName;
@@ -35,6 +36,10 @@ class EmployeeData extends Data implements DataEmployeeData{
     #[MapInputName('occupation_id')]
     #[MapName('occupation_id')]
     public mixed $occupation_id = null;
+
+    #[MapInputName('occupation')]
+    #[MapName('occupation')]
+    public ?OccupationData $occupation = null;
 
     #[MapInputName('hired_at')]
     #[MapName('hired_at')]
@@ -85,16 +90,11 @@ class EmployeeData extends Data implements DataEmployeeData{
             $data->props['prop_profession']['name'] = $profession->name;
         }
 
-        $data->props['prop_occupation'] = [
-            'id'   => $data->occupation_id ?? null,
-            'name' => null
-        ];
-
-        if (isset($data->props['prop_occupation']['id']) && !isset($data->props['prop_occupation']['name'])){
-            $occupation = $new->OccupationModel()->findOrFail($data->props['prop_occupation']['id']);
-            $data->props['prop_occupation']['name'] = $occupation->name;
-        }
-
+        $occupation = (isset($data->props['prop_occupation']['id']))
+             ? $new->OccupationModel()->findOrFail($data->props['prop_occupation']['id'])
+             : app(config('app.contracts.Occupation'))->prepareStoreOccupation($data->occupation);
+        $data->props['prop_occupation'] = $occupation->toViewApi()->only(['id','name']);
+        
         $data->props['prop_shift'] = [
             'id'   => $data->shift_id ?? null,
             'name' => null
