@@ -10,7 +10,7 @@ use Hanafalah\ModuleEmployee\Resources\ShiftSchedule\{
 
 class ShiftSchedule extends EmployeeStuff
 {
-    protected $table = 'employee_stuffs';
+    protected $table = 'unicodes';
     
     protected $casts = [
         'name'     => 'string',
