@@ -15,7 +15,7 @@ class ViewShift extends ApiResource
             'event'     => $this->prop_event,
             'shift_schedules' => $this->relationValidation('shiftSchedules',function(){
                 return $this->shiftSchedules->transform(function($shift_schedule){
-                    return $shift_schedule->toViewApi();
+                    return $shift_schedule->toViewApi()->resolve();
                 });
             })
         ];

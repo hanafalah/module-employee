@@ -19,7 +19,7 @@ class ViewEmployee extends ApiResource
             'profile'          => $this->profile ?? null,
             'sign'             => $this->sign ?? null,
             'employee_service' => $this->relationValidation('employeeService', function () {
-                return $this->employeeService->toViewApi();
+                return $this->employeeService->toViewApi()->resolve();
             }),            
             'profession'       => $this->prop_profession,
             'occupation'       => $this->prop_occupation,

@@ -12,7 +12,7 @@ class ShowEmployeeService extends ViewEmployeeService
         $arr = [
             'price_components' => $this->relationValidation('priceComponents', function () {
                 return $this->priceComponents->transform(function ($priceComponent) {
-                    return $priceComponent->toShowApi();
+                    return $priceComponent->toShowApi()->resolve();
                 });
             })
         ];

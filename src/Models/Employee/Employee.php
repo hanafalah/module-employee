@@ -66,7 +66,8 @@ class Employee extends BaseModel
     public function showUsingRelation(): array{
         return [
             'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
-            'userReference' => fn($q) => $q->with(['roles', 'user'])
+            'userReference' => fn($q) => $q->with(['roles', 'user']),
+            'room', 'rooms'
         ];
     }
 
@@ -85,13 +86,8 @@ class Employee extends BaseModel
         return $this->morphOneModel('EmployeeService', 'reference');
     }
 
-    public function employeeServices(){
-        return $this->morphManyModel('EmployeeService', 'reference');
-    }
-
-    public function employeeType(){
-        return $this->belongsToModel('EmployeeType');
-    }
+    public function employeeServices(){return $this->morphManyModel('EmployeeService', 'reference');}
+    public function employeeType(){return $this->belongsToModel('EmployeeType');}
     public function attendence(){return $this->hasOneModel('Attendence');}
     public function attendences(){return $this->hasManyModel('Attendence');}
 }

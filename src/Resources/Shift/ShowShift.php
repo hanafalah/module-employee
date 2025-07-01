@@ -9,7 +9,7 @@ class ShowShift extends ViewShift
     {
         $arr = [
             'event' => $this->relationValidation('event',function(){
-                return $this->event->toShowApi();
+                return $this->event->toShowApi()->resolve();
             })
         ];
         $arr = array_merge(parent::toArray($request), $arr);

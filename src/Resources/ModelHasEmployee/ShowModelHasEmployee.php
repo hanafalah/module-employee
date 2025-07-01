@@ -11,10 +11,10 @@ class ShowModelHasEmployee extends ViewModelHasEmployee
     {
         $arr = [
             'model'     => $this->relationValidation('model', function () {
-                return $this->model->toShowApi();
+                return $this->model->toShowApi()->resolve();
             }),
             'employee' => $this->relationValidation('employee', function () {
-                return $this->employee->toShowApi();
+                return $this->employee->toShowApi()->resolve();
             })
         ];
         $arr = array_merge(parent::toArray($request), $arr);
