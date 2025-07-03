@@ -164,8 +164,8 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
     }
 
     public function showProfilePhoto(? Model $model = null): mixed{
-        $is_direct_photo = (strpos(request()->header('accept'), 'image/*') === 0);
-        if (!$is_direct_photo){
+        $is_json = (strpos(request()->header('accept'), 'application/json') === 0);
+        if ($is_json){
             return $this->transforming($this->usingEntity()->getViewFileResource(),function() use ($model){
                 return $this->prepareShowProfilePhoto($model,request()->all());
             });
