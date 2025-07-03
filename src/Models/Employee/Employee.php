@@ -45,7 +45,6 @@ class Employee extends BaseModel
 
     public function getPropsQuery(): array{
         return [
-            'uuid' => 'props->uuid',
             'occupation_name' => 'props->prop_occupation->name',
             'profession_name' => 'props->prop_profession->name',
             'employee_type_name' => 'props->prop_employee_type->name'
