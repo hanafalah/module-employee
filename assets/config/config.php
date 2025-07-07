@@ -5,15 +5,16 @@ use Hanafalah\ModuleEmployee\{
     Commands as ModuleEmployeeCommands,
     Contracts
 };
+use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
 
 return [
-    'namespace' => 'Hanafalah\\ModuleEmployee',
+    'namespace' => 'Hanafalah\ModuleEmployee',
     'app' => [
         'contracts' => [
             //ADD YOUR CONTRACTS HERE
         ]
     ],
-    'libs' => [
+    'libs'       => [
         'model' => 'Models',
         'contract' => 'Contracts',
         'schema' => 'Schemas',
@@ -22,6 +23,7 @@ return [
         'resource' => 'Resources',
         'migration' => '../assets/database/migrations'
     ],
+    'employee_identities' => CardIdentity::cases(),
     'database' => [
         'models' => [
             // ADD YOUR MODELS HERE

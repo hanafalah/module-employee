@@ -4,7 +4,7 @@ namespace Hanafalah\ModuleEmployee\Resources\EmployeeService;
 
 use Hanafalah\ModuleService\Resources\ShowService;
 
-class ShowEmployeeService extends ShowService
+class ShowEmployeeService extends ViewEmployeeService
 {
 
     public function toArray(\Illuminate\Http\Request $request): array
@@ -12,12 +12,12 @@ class ShowEmployeeService extends ShowService
         $arr = [
             'price_components' => $this->relationValidation('priceComponents', function () {
                 return $this->priceComponents->transform(function ($priceComponent) {
-                    return $priceComponent->toShowApi();
+                    return $priceComponent->toShowApi()->resolve();
                 });
             })
         ];
-        $view = $this->resolveNow(new ViewEmployeeService($this));
-        $arr = array_merge(parent::toArray($request), $view, $arr);
+        $show = $this->resolveNow(new ShowService($this));
+        $arr = array_merge(parent::toArray($request), $show, $arr);
 
         return $arr;
     }

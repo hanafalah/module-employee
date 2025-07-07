@@ -2,14 +2,10 @@
 
 namespace Hanafalah\ModuleEmployee\Schemas;
 
-use Hanafalah\LaravelSupport\Contracts\Data\PaginateData;
-use Hanafalah\LaravelSupport\Supports\Data;
 use Illuminate\Database\Eloquent\{
-    Builder,
-    Collection,
-    Model
+    Builder, Model
 };
-use Hanafalah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\ModuleEmployee\Supports\BaseModuleEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\Employee as ContractsEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Data\CardIdentityData;
 use Hanafalah\ModuleEmployee\Contracts\Data\EmployeeData;
@@ -18,13 +14,13 @@ use Hanafalah\ModuleEmployee\Contracts\Data\ProfilePhotoData;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfileEmployee;
 use Hanafalah\ModuleEmployee\Contracts\Schemas\ProfilePhoto;
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
-class Employee extends PackageManagement implements ContractsEmployee,ProfileEmployee,ProfilePhoto
+class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileEmployee, ProfilePhoto
 {
     protected string $__entity = 'Employee';
     public static $employee_model;
+    protected mixed $__order_by_created_at = false; //asc, desc, false
 
     protected array $__cache = [
         'index' => [
@@ -33,23 +29,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
             'duration' => 60 * 24 * 7
         ]
     ];
-
-    protected function viewUsingRelation(): array{
-        return ['people.cardIdentities'];
-    }
-
-    protected function showUsingRelation(): array{
-        return [
-            'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
-            'userReference' => fn($q) => $q->with(['roles', 'user']),
-            'profession',
-            'cardIdentities'
-        ];
-    }
-
-    public function getEmployee(): mixed{
-        return static::$employee_model;
-    }
 
     public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model{
         $attributes ??= request()->all();
@@ -60,7 +39,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
             $uuid = $attributes['uuid'] ?? null;
             $is_valid = isset($id) || isset($uuid);
             if (!$is_valid) throw new \Exception('id or uuid not found');
-
             $model = $this->getEmployeeByIdentifier($attributes)->firstOrFail();            
         } else {
             $model->load($this->showUsingRelation());
@@ -74,14 +52,8 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         return $this->employee()->with($this->showUsingRelation())
                 ->when(isset($id), fn($q) => $q->where('id', $id))
                 ->when(isset($uuid), function ($query) use ($uuid) {
-                    $query->whereHas('userReference', fn($q) => $q->uuid($uuid));
+                    return $query->whereHas('userReference', fn($q) => $q->uuid($uuid));
                 });
-    }
-
-    public function showEmployee(?Model $model = null): array{
-        return $this->showEntityResource(function() use ($model){
-            return $this->prepareShowEmployee($model);
-        });
     }
 
     public function prepareShowProfile(?Model $model = null, ?array $attributes = null): Model{
@@ -100,9 +72,12 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
 
     protected function prepareEmployeePeople(EmployeeData|ProfileEmployeeData $employee_dto): array{
         $people_schema = $this->schemaContract('people');
+        $add = [
+            'name' => $employee_dto->name
+        ];
         if (isset($employee_dto->id) || isset($employee_dto->uuid)){ 
             $employee = $this->getEmployeeByIdentifier([
-                'id' => $employee_dto->id ?? null,
+                'id'   => $employee_dto->id ?? null,
                 'uuid' => $employee_dto->uuid ?? null
             ])->firstOrFail();            
             
@@ -116,7 +91,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
             $people = $people_schema->prepareStorePeople($employee_dto->people);
             $guard = ['people_id' => $employee_dto->people->id ?? $people->getKey()];
         }
-        $employee = $this->employee()->updateOrCreate($guard);
+        $employee = $this->employee()->updateOrCreate($guard,$add);
         $employee->refresh();        
         
         $people ??= $employee->people;
@@ -125,38 +100,37 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         $employee->name = $people->name;
         //SET EMPLOYEE IDENTITIES
         if (isset($employee_dto->card_identity)){
-            $card_identity = $employee_dto->card_identity;
-            $this->employeeIdentity($employee, $card_identity,array_column(CardIdentity::cases(),'value'));
+            $this->employeeIdentity(
+                $employee, 
+                $employee_dto->card_identity,
+                array_column(config('module-employee.employee_identities'),'value')
+            );
         }
         $this->prepareStoreProfilePhoto($employee_dto->profile_dto ?? $this->requestDTO(ProfilePhotoData::class,[
             'id'      => $employee->getKey(),
             'profile' => $employee_dto->profile
         ]));
-
         return [$employee,$people];
     }
 
     public function prepareStoreEmployee(EmployeeData $employee_dto): Model{
         list($employee,$people)  = $this->prepareEmployeePeople($employee_dto);
         $employee->hired_at      = $employee_dto->hired_at ?? null;        
-        $employee->profession_id = $employee_dto->profession_id ?? null;        
+        $employee->profession_id = $employee_dto->profession_id ?? null;
+        $employee->occupation_id = $employee_dto->occupation_id ?? null;
+        $employee->shift_id      = $employee_dto->shift_id ?? null;
+        $this->fillingProps($employee,$employee_dto->props);
         $employee->save();
-
         //MANAGE EMPLOYEE ACCOUNT/USER ACCESS
         if (isset($employee_dto->user_reference)){
-            $user_reference_dto                 = &$employee_dto->user_reference;
+            $user_reference_dto                 = $employee_dto->user_reference;
+            $user_reference_dto->id             = $employee->userReference->getKey();
             $user_reference_dto->uuid           = $employee->uuid;
             $user_reference_dto->reference_id   = $employee->getKey();
             $user_reference_dto->reference_type = $employee->getMorphClass();
-            $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
+            $user_reference = $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
         }
         return static::$employee_model = $employee;
-    }
-
-    public function storeEmployee(? EmployeeData $employee_dto = null): array{
-        return $this->transaction(function () use ($employee_dto) {
-            return $this->showEmployee($this->prepareStoreEmployee($employee_dto ?? $this->requestDTO(EmployeeData::class)));
-        });
     }
 
     public function prepareStoreProfile(ProfileEmployeeData $profile_employee_dto): Model{
@@ -165,14 +139,14 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         list($employee,$people) = $this->prepareEmployeePeople($profile_employee_dto);
         return static::$employee_model = $employee;
     }
-    public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array{
 
+    public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array{
         return $this->transaction(function() use ($profile_employee_dto){
             return $this->showEmployee($this->prepareStoreProfile($profile_employee_dto ?? $this->requestDTO(ProfileEmployeeData::class)));
         });
     }
 
-    public function prepareShowProfilePhoto(? Model $model = null, array $attributes = null): mixed{
+    public function prepareShowProfilePhoto(? Model $model = null, ?array $attributes = null): mixed{
         $attributes ??= \request()->all();
         $model ??= $this->getEmployee();
         if (!isset($model)){
@@ -189,9 +163,10 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         }
     }
 
-    public function showProfilePhoto(? Model $model = null, bool $is_direct_photo = false): mixed{
-        if (!$is_direct_photo){
-            return $this->transforming($this->usingEntity()->getViewPhotoResource(),function() use ($model){
+    public function showProfilePhoto(? Model $model = null): mixed{
+        $is_json = (strpos(request()->header('accept'), 'application/json') === 0);
+        if ($is_json){
+            return $this->transforming($this->usingEntity()->getViewFileResource(),function() use ($model){
                 return $this->prepareShowProfilePhoto($model,request()->all());
             });
         }else{
@@ -204,7 +179,7 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
     public function prepareStoreProfilePhoto(ProfilePhotoData $profile_photo_dto): Model{
         if (!isset($profile_photo_dto->id) && !isset($profile_photo_dto->uuid)) throw new \Exception('id or uuid not found');
         $employee = $this->getEmployeeByIdentifier(['id' => $profile_photo_dto->id, 'uuid' => $profile_photo_dto->uuid])->firstOrFail();
-        $employee->setProfilePhoto($profile_photo_dto->profile);
+        $employee->profile = $employee->setProfilePhoto($profile_photo_dto->profile);
         $employee->save();
         return static::$employee_model = $employee;
     }
@@ -226,26 +201,6 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         $employee->setAttribute('prop_card_identity',$card_identity);
     }
 
-    public function prepareViewEmployeePaginate(PaginateData $paginate_dto): LengthAwarePaginator{
-        return $this->employee()->with($this->viewUsingRelation())->paginate(...$paginate_dto->toArray())->appends(request()->all());
-    }
-
-    public function viewEmployeePaginate(? PaginateData $paginate_dto = null): array{
-        return $this->viewEntityResource(function() use ($paginate_dto){            
-            return $this->prepareViewEmployeePaginate($paginate_dto ?? $this->requestDTO(PaginateData::class));
-        });
-    }
-
-    public function prepareViewEmployeeList(): Collection{
-        return $this->employee()->with($this->viewUsingRelation())->get();
-    }
-
-    public function viewEmployeeList(): array{
-        return $this->viewEntityResource(function(){
-            return $this->prepareViewEmployeeList();
-        });
-    }
-
     public function prepareDeleteEmployee(? array $attributes = null): bool{
         $attributes ??= request()->all();
         if (!isset($attributes['id']) && !isset($attributes['uuid'])){
@@ -265,15 +220,10 @@ class Employee extends PackageManagement implements ContractsEmployee,ProfileEmp
         return $employee->delete();
     }
 
-    public function deleteEmployee(): bool{
-        return $this->transaction(function(){
-            return $this->prepareDeleteEmployee();
-        });
-    }
-
     public function employee(mixed $conditionals = null): Builder{
         $this->booting();
-        return $this->EmployeeModel()->conditionals($this->mergeCondition($conditionals))->withParameters('or')->orderBy('props->prop_people->name','asc');
+        return $this->EmployeeModel()->conditionals($this->mergeCondition($conditionals))
+                    ->withParameters('or')->orderBy('props->prop_people->name','asc');
     }
 }
 
