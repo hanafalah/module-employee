@@ -85,15 +85,17 @@ class EmployeeData extends Data implements DataEmployeeData{
         ];
 
         $new = static::new();
-        if (isset($data->props['prop_profession']['id']) && !isset($data->props['prop_profession']['name'])){
-            $profession = $new->ProfessionModel()->findOrFail($data->props['prop_profession']['id']);
-            $data->props['prop_profession']['name'] = $profession->name;
+
+        $profession = $new->ProfessionModel();
+        if (isset($data->profession_id)){
+            $profession = $profession->findOrFail($data->props['prop_profession']['id']);
         }
+        $data->props['prop_profession'] = $profession->toViewApi()->only(['id','name']);
         
         $occupation = $new->OccupationModel();
-        if (isset($data->props['prop_occupation']['id']) || isset($data->occupation)){
-            $occupation = (isset($data->props['prop_occupation']['id']))
-                 ? $occupation->findOrFail($data->props['prop_occupation']['id'])
+        if (isset($data->occupation_id) || isset($data->occupation)){
+            $occupation = isset($data->occupation_id)
+                 ? $occupation->findOrFail($data->occupation_id)
                  : app(config('app.contracts.Occupation'))->prepareStoreOccupation($data->occupation);
         }
         $data->props['prop_occupation'] = $occupation->toViewApi()->only(['id','name']);
