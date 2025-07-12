@@ -4,11 +4,15 @@ namespace Hanafalah\ModuleEmployee\Models\EmployeeType;
 
 use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\ModuleEmployee\Resources\EmployeeType\{ViewEmployeeType, ShowEmployeeType};
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmployeeType extends BaseModel{
-    use SoftDeletes;
+    use SoftDeletes, HasUlids;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $primaryKey = 'id';
     protected $list = [
         'id', 'name', 'note'
     ];
