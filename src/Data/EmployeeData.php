@@ -78,19 +78,13 @@ class EmployeeData extends Data implements DataEmployeeData{
     public ?array $props = null;
 
     public static function after(EmployeeData $data): EmployeeData{
-        $data->name = $data->people->name;
-        $data->props['prop_profession'] = [
-            'id'   => $data->profession_id ?? null,
-            'name' => null
-        ];
-
         $new = static::new();
+        $data->name = $data->people->name;
+        $props = &$data->props;
 
         $profession = $new->ProfessionModel();
-        if (isset($data->profession_id)){
-            $profession = $profession->findOrFail($data->props['prop_profession']['id']);
-        }
-        $data->props['prop_profession'] = $profession->toViewApi()->only(['id','name']);
+        if (isset($data->profession_id)) $profession = $profession->findOrFail($data->profession_id);
+        $props['prop_profession'] = $profession->toViewApi()->only(['id','flag','label','name']);
         
         $occupation = $new->OccupationModel();
         if (isset($data->occupation_id) || isset($data->occupation)){
@@ -98,7 +92,7 @@ class EmployeeData extends Data implements DataEmployeeData{
                  ? $occupation->findOrFail($data->occupation_id)
                  : app(config('app.contracts.Occupation'))->prepareStoreOccupation($data->occupation);
         }
-        $data->props['prop_occupation'] = $occupation->toViewApi()->only(['id','name']);
+        $data->props['prop_occupation'] = $occupation->toViewApi()->only(['id','flag','label','name']);
         
         $data->props['prop_shift'] = [
             'id'   => $data->shift_id ?? null,
