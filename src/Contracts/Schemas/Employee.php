@@ -25,7 +25,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * @method array viewEmployeePaginate(?PaginateData $paginate_dto = null)
  * @method array storeEmployee(?EmployeeData $employee_dto = null)
  */
-
 interface Employee extends DataManagement
 {
     public function prepareShowEmployee(?Model $model = null, ?array $attributes = null): Model;

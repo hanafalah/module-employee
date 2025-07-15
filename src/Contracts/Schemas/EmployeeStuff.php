@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method array viewEmployeeStuffPaginate(?PaginateData $paginate_dto = null)
  * @method array storeEmployeeStuff(?EmployeeStuffData $employee_stuff_dto = null);
  */
-
 interface EmployeeStuff extends Unicode
 {
     public function prepareStoreEmployeeStuff(EmployeeStuffData $employee_stuff_dto): Model;
