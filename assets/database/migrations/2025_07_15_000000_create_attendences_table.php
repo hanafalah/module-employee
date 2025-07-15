@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Hanafalah\ModuleEmployee\Models\Attendence\{
+    AbsenceRequest,
     Attendence,
     Shift
 };
@@ -32,12 +33,16 @@ return new class extends Migration
             Schema::create($table_name, function (Blueprint $table) {
                 $employee = app(config('database.models.Employee',Employee::class));
                 $shift    = app(config('database.models.Shift',Shift::class));
+                $absence_request = app(config('database.models.AbsenceRequest',AbsenceRequest::class));
 
                 $table->ulid('id')->primary();
                 $table->foreignIdFor($employee::class)
                      ->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
 
                 $table->foreignIdFor($shift::class)->nullable()
+                     ->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
+
+                $table->foreignIdFor($absence_request::class)->nullable()
                      ->index()->constrained()->cascadeOnUpdate()->restrictOnDelete();
 
                 $table->timestamp('check_in')->nullable();

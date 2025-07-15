@@ -37,14 +37,14 @@ return new class extends Migration
                     
                 $table->string('absence_type', 255)->nullable(false);
                 $table->unsignedInteger('total_day')->nullable();
-                $table->datetime('start_at')->nullable();
-                $table->datetime('end_at')->nullable();
                 $table->string('reason', 255)->nullable();
                 $table->string('status', 255)->nullable(false);
                 $table->string('approver_type', 255)->nullable(true);
                 $table->foreignUlid('approver_id')->nullable(true)->nullOnDelete();
                 $table->datetime('approved_at')->nullable(true);
                 $table->json('props')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
             });
         }
     }

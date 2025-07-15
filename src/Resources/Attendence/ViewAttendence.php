@@ -21,8 +21,15 @@ class ViewAttendence extends ApiResource
       'shift_id' => $this->shift_id, 
       'check_in' => $this->check_in, 
       'check_out' => $this->check_out,
-      'status' => $this->status
+      'reason' => $this->reason,
+      'status' => $this->status,
+      'paths'       => $this->paths,
     ];
+    $paths_urls = [];
+    if (isset($this->paths)){
+      foreach ($this->paths as $path) $paths_urls[] = $this->getFullUrl($path);
+    }
+    $arr['url_paths'] = $paths_urls;
     return $arr;
   }
 }
