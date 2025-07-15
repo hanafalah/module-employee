@@ -23,6 +23,7 @@ class ViewEmployee extends ApiResource
             }),            
             'profession'       => $this->prop_profession,
             'occupation'       => $this->prop_occupation,
+            'current_attendence' => $this->prop_current_attendence,
             'created_at'       => $this->created_at,
             'updated_at'       => $this->updated_at
         ];

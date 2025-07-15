@@ -29,6 +29,16 @@ return [
             // ADD YOUR MODELS HERE
             ]
     ],
+    'attendence_summary' => [
+        'attendence' => [
+            'start_work_hour' => '07:00:00',
+            'schema' => 'AttendenceSummary'
+        ],
+        'annual_leave' => [
+            'period' => 12,
+            'schema' => 'AnnualLeaveSummary'
+        ]
+    ],
     'commands' => [
         ModuleEmployeeCommands\InstallMakeCommand::class
     ]
