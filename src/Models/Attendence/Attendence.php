@@ -3,6 +3,7 @@
 namespace Hanafalah\ModuleEmployee\Models\Attendence;
 
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
+use Hanafalah\LaravelSupport\Concerns\Support\HasFileUpload;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\ModuleEmployee\Resources\Attendence\ShowAttendence;
 use Hanafalah\ModuleEmployee\Resources\Attendence\ViewAttendence;
@@ -10,13 +11,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Attendence extends BaseModel{
-    use HasUlids, SoftDeletes, HasProps;
+    use HasUlids, SoftDeletes, HasProps, HasFileUpload;
 
     protected $keyType    = 'string';
     protected $primaryKey = 'id';
     protected $list       = [
         'id', 'employee_id', 'shift_id', 'check_in', 'check_out',
-        'status', 'props'
+        'absence_request_id', 'status', 'props'
     ];
     protected $show       = [
         'author_type', 'author_id'
@@ -48,5 +49,6 @@ class Attendence extends BaseModel{
 
     public function employee(){return $this->belongsToModel('Employee');}
     public function author(){return $this->morphTo();}
-    public function shift(){return $this->belongsToModel('shift');}
+    public function shift(){return $this->belongsToModel('Shift');}
+    public function absenceRequest(){return $this->belongsToModel('AbsenceRequest');}
 }

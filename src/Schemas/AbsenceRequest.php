@@ -25,19 +25,24 @@ class AbsenceRequest extends BaseModuleEmployee implements ContractsAbsenceReque
 
     public function prepareStoreAbsenceRequest(AbsenceRequestData $absence_request_dto): Model{
         $add = [
-            'name' => $absence_request_dto->name
+            'absence_type'  => $absence_request_dto->absence_type,
+            'total_day'     => $absence_request_dto->total_day, 
+            'reason'        => $absence_request_dto->reason
         ];
-        $guard  = ['id' => $absence_request_dto->id];
-        $create = [$guard, $add];
-        // if (isset($absence_request_dto->id)){
-        //     $guard  = ['id' => $absence_request_dto->id];
-        //     $create = [$guard, $add];
-        // }else{
-        //     $create = [$add];
-        // }
-
+        if (isset($absence_request_dto->id)){
+            $guard = ['id' => $absence_request_dto->id];
+        }else{
+            $guard = ['employee_id' => $absence_request_dto->employee_id];
+        }
+        $create = [$guard,$add];
         $absence_request = $this->usingEntity()->updateOrCreate(...$create);
         $this->fillingProps($absence_request,$absence_request_dto->props);
+
+        if (isset($absence_request_dto->paths) && count($absence_request_dto->paths) > 0) {
+            static::$absence_request_model = $absence_request;
+            $absence_request->paths = $this->pushFiles($absence_request_dto->paths);
+        }
+
         $absence_request->save();
         return static::$absence_request_model = $absence_request;
     }

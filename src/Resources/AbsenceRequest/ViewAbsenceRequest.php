@@ -15,7 +15,17 @@ class ViewAbsenceRequest extends ApiResource
   public function toArray(\Illuminate\Http\Request $request): array
   {
     $arr = [
-      
+      'id'            => $this->id, 
+      'employee_id'   => $this->employee_id, 
+      'employee'      => $this->prop_employee,
+      'absence_type'  => $this->absence_type,
+      'total_day'     => $this->total_day, 
+      'dates'         => $this->dates, 
+      'reason'        => $this->reason, 
+      'status'        => $this->status, 
+      'approver_type' => $this->approver_type, 
+      'approver_id'   => $this->approver_id, 
+      'approved_at'   => $this->approved_at
     ];
     return $arr;
   }

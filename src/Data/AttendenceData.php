@@ -46,6 +46,10 @@ class AttendenceData extends Data implements DataAttendenceData{
     #[MapName('author_id')]
     public mixed $author_id = null;
 
+    #[MapInputName('paths')]
+    #[MapName('paths')]
+    public ?array $paths = [];
+
     #[MapInputName('props')]
     #[MapName('props')]
     public ?AttendencePropsData $props = null;
@@ -69,7 +73,7 @@ class AttendenceData extends Data implements DataAttendenceData{
         $props = &$data->props->props;
 
         $employee = $new->EmployeeModel()->findOrFail($data->employee_id);
-        $props['prop_employee'] = $employee->toViewApi()->only(['id','name', 'profile']);
+        $props['prop_employee'] = $employee->toViewApi()->only(['id','name']);
 
         $data->employee_model = $employee;
 

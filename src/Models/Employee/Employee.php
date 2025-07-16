@@ -36,6 +36,8 @@ class Employee extends BaseModel
         'uuid' => 'string',
         'occupation_name' => 'string',
         'profession_name' => 'string',
+        'profession_label' => 'string',
+        'occupation_label' => 'string',
         'employee_type_name' => 'string',
     ]; 
 
@@ -47,6 +49,8 @@ class Employee extends BaseModel
         return [
             'occupation_name' => 'props->prop_occupation->name',
             'profession_name' => 'props->prop_profession->name',
+            'profession_label' => 'props->prop_profession->label',
+            'occupation_label' => 'props->prop_occupation->label',
             'employee_type_name' => 'props->prop_employee_type->name'
         ];
     }
