@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 class Shift extends BaseModuleEmployee implements ContractsShift
 {
     protected string $__entity = 'Shift';
-    public static $shift_model;
+    public $shift_model;
 
     protected array $__cache = [
         'index' => [
@@ -69,7 +69,7 @@ class Shift extends BaseModuleEmployee implements ContractsShift
         }
         $this->fillingProps($shift,$shift_dto->props);
         $shift->save();
-        return static::$shift_model = $shift;
+        return $this->shift_model = $shift;
     }
 
     public function shiftCommon(mixed $conditionals = null): Builder{

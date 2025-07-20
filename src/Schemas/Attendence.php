@@ -15,14 +15,14 @@ class Attendence extends BaseModuleEmployee implements ContractsAttendence
     use HasFileUpload;
     
     protected string $__entity = 'Attendence';
-    public static $attendence_model;
+    public $attendence_model;
 
     protected function pushFiles(array $paths): array{
         return $this->setupFiles($paths);
     }
 
     public function getCurrentFiles(): array{
-        return static::$attendence_model->paths ?? [];
+        return $this->attendence_model->paths ?? [];
     }
 
     public function prepareStoreAttendence(AttendenceData $attendence_dto): Model{
@@ -61,7 +61,7 @@ class Attendence extends BaseModuleEmployee implements ContractsAttendence
         }
 
         $attendence->save();
-        return static::$attendence_model = $attendence;
+        return $this->attendence_model = $attendence;
     }
 }
 

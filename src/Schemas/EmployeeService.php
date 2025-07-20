@@ -11,7 +11,7 @@ use Hanafalah\ModuleEmployee\Resources\EmployeeService\{ViewEmployeeService, Sho
 class EmployeeService extends Service implements ContractsEmployeeService
 {
     protected string $__entity = 'EmployeeService';
-    public static $employee_service_model;
+    public $employee_service_model;
 
     protected array $__resources = [
         'view' => ViewEmployeeService::class,
@@ -56,7 +56,7 @@ class EmployeeService extends Service implements ContractsEmployeeService
             $employee_service->priceComponents()->delete();
         }
 
-        return static::$employee_service_model = $employee;
+        return $this->employee_service_model = $employee;
     }
 
     public function prepareShowEmployeeService(?Model $model = null, ?array $attributes = null): Model
@@ -72,7 +72,7 @@ class EmployeeService extends Service implements ContractsEmployeeService
         } else {
             $model->load($this->showUsingRelation());
         }
-        return static::$employee_service_model = $model;
+        return $this->employee_service_model = $model;
     }
 
     public function showUsingRelation(): array
@@ -96,7 +96,7 @@ class EmployeeService extends Service implements ContractsEmployeeService
 
     public function getEmployeeService(): mixed
     {
-        return static::$employee_service_model;
+        return $this->employee_service_model;
     }
 
     public function employeeService(mixed $conditionals = null): Builder

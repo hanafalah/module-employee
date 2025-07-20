@@ -13,7 +13,7 @@ use Hanafalah\ModuleEmployee\Contracts\Data\AbsenceRequestData;
 class AbsenceRequest extends BaseModuleEmployee implements ContractsAbsenceRequest
 {
     protected string $__entity = 'AbsenceRequest';
-    public static $absence_request_model;
+    public $absence_request_model;
 
     protected array $__cache = [
         'index' => [
@@ -44,6 +44,6 @@ class AbsenceRequest extends BaseModuleEmployee implements ContractsAbsenceReque
         }
 
         $absence_request->save();
-        return static::$absence_request_model = $absence_request;
+        return $this->absence_request_model = $absence_request;
     }
 }

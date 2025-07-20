@@ -16,7 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class EmployeeType extends BaseModuleEmployee implements ContractsEmployeeType
 {
     protected string $__entity = 'EmployeeType';
-    public static $employee_type_model;
+    public $employee_type_model;
 
     protected function viewUsingRelation(): array{
         return [];
@@ -27,7 +27,7 @@ class EmployeeType extends BaseModuleEmployee implements ContractsEmployeeType
     }
 
     public function getEmployeeType(): mixed{
-        return static::$employee_type_model;
+        return $this->employee_type_model;
     }
 
     public function prepareShowEmployeeType(?Model $model = null, ?array $attributes = null): Model{
@@ -42,7 +42,7 @@ class EmployeeType extends BaseModuleEmployee implements ContractsEmployeeType
         } else {
             $model->load($this->showUsingRelation());
         }
-        return static::$employee_type_model = $model;
+        return $this->employee_type_model = $model;
     }    
 
     public function showEmployeeType(?Model $model = null): array{
@@ -58,7 +58,7 @@ class EmployeeType extends BaseModuleEmployee implements ContractsEmployeeType
             'name'   => $employee_type_dto->name,            
             'note'   => $employee_type_dto->note ?? null
         ]);
-        return static::$employee_type_model = $employee_type;
+        return $this->employee_type_model = $employee_type;
     }
 
     public function storeEmployeeType(? EmployeeTypeData $employee_type_dto = null): array{

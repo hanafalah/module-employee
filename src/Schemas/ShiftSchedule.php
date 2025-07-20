@@ -9,7 +9,7 @@ use Hanafalah\ModuleEmployee\Contracts\Data\ShiftScheduleData;
 class ShiftSchedule extends EmployeeStuff implements ContractsShiftSchedule
 {
     protected string $__entity = 'ShiftSchedule';
-    public static $shift_schedule_model;
+    public $shift_schedule_model;
     protected mixed $__order_by_created_at = false;
 
     protected array $__cache = [
@@ -23,6 +23,6 @@ class ShiftSchedule extends EmployeeStuff implements ContractsShiftSchedule
     public function prepareStoreShiftSchedule(ShiftScheduleData $shift_schedule_dto): Model{
         $shift_schedule = parent::prepareStoreEmployeeStuff($shift_schedule_dto);
         $this->forgetTagsEntity();
-        return static::$shift_schedule_model = $shift_schedule;
+        return $this->shift_schedule_model = $shift_schedule;
     }
 }

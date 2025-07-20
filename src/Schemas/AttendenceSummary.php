@@ -13,7 +13,7 @@ use Hanafalah\ModuleEmployee\Contracts\Data\AttendenceSummaryData;
 class AttendenceSummary extends BaseModuleEmployee implements ContractsAttendenceSummary
 {
     protected string $__entity = 'AttendenceSummary';
-    public static $attendence_summary_model;
+    public $attendence_summary_model;
 
     protected array $__cache = [
         'index' => [
@@ -39,6 +39,6 @@ class AttendenceSummary extends BaseModuleEmployee implements ContractsAttendenc
         $attendence_summary = $this->usingEntity()->updateOrCreate(...$create);
         $this->fillingProps($attendence_summary,$attendence_summary_dto->props);
         $attendence_summary->save();
-        return static::$attendence_summary_model = $attendence_summary;
+        return $this->attendence_summary_model = $attendence_summary;
     }
 }

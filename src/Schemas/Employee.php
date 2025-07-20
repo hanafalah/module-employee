@@ -19,7 +19,7 @@ use Illuminate\Support\Str;
 class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileEmployee, ProfilePhoto
 {
     protected string $__entity = 'Employee';
-    public static $employee_model;
+    public $employee_model;
     protected mixed $__order_by_created_at = false; //asc, desc, false
 
     protected array $__cache = [
@@ -43,7 +43,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         } else {
             $model->load($this->showUsingRelation());
         }
-        return static::$employee_model = $model;
+        return $this->employee_model = $model;
     }    
 
     protected function getEmployeeByIdentifier(array $attributes){
@@ -59,7 +59,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
     public function prepareShowProfile(?Model $model = null, ?array $attributes = null): Model{
         $attributes ??= \request()->all();
         if (!isset($attributes['uuid'])) throw new \Exception('uuid not found');
-        return static::$employee_model = $this->employee()->with($this->showUsingRelation())->whereHas('userReference',function($query) use ($attributes){
+        return $this->employee_model = $this->employee()->with($this->showUsingRelation())->whereHas('userReference',function($query) use ($attributes){
             $query->uuid($attributes['uuid']);
         })->firstOrFail();
     }
@@ -130,14 +130,14 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
             $user_reference_dto->reference_type = $employee->getMorphClass();
             $user_reference = $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
         }
-        return static::$employee_model = $employee;
+        return $this->employee_model = $employee;
     }
 
     public function prepareStoreProfile(ProfileEmployeeData $profile_employee_dto): Model{
         if (!isset($profile_employee_dto->id) && !isset($profile_employee_dto->uuid)) throw new \Exception('id or uuid not found');
 
         list($employee,$people) = $this->prepareEmployeePeople($profile_employee_dto);
-        return static::$employee_model = $employee;
+        return $this->employee_model = $employee;
     }
 
     public function storeProfile(? ProfileEmployeeData $profile_employee_dto = null): array{
@@ -181,7 +181,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         $employee = $this->getEmployeeByIdentifier(['id' => $profile_photo_dto->id, 'uuid' => $profile_photo_dto->uuid])->firstOrFail();
         $employee->profile = $employee->setProfilePhoto($profile_photo_dto->profile);
         $employee->save();
-        return static::$employee_model = $employee;
+        return $this->employee_model = $employee;
     }
 
     public function storeProfilePhoto(?ProfilePhotoData $profile_photo_dto = null): array{

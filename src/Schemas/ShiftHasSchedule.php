@@ -12,7 +12,7 @@ use Hanafalah\ModuleEmployee\Contracts\Data\ShiftHasScheduleData;
 class ShiftHasSchedule extends BaseModuleEmployee implements ContractsShiftHasSchedule
 {
     protected string $__entity = 'ShiftHasSchedule';
-    public static $shift_has_schedule_model;
+    public $shift_has_schedule_model;
     //protected mixed $__order_by_created_at = false; //asc, desc, false
 
     protected array $__cache = [
@@ -49,6 +49,6 @@ class ShiftHasSchedule extends BaseModuleEmployee implements ContractsShiftHasSc
         $this->fillingProps($shift_has_schedule,$shift_has_schedule_dto->props);
         $shift_has_schedule->save();
         $this->forgetTagsEntity();
-        return static::$shift_has_schedule_model = $shift_has_schedule;
+        return $this->shift_has_schedule_model = $shift_has_schedule;
     }
 }
