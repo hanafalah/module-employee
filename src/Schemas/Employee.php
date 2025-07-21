@@ -155,7 +155,7 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
             if (!isset($id) && !isset($uuid)) throw new \Exception('id or uuid not found');
             $model = $this->getEmployeeByIdentifier($attributes)->firstOrFail();
         }
-        static::$employee_model = $model;
+        $this->employee_model = $model;
         if (isset($attributes['is_direct_photo']) && $attributes['is_direct_photo']) {
             return $model->getProfilePhoto();
         }else{

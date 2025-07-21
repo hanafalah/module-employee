@@ -56,7 +56,7 @@ class Attendence extends BaseModuleEmployee implements ContractsAttendence
         $this->fillingProps($attendence,$attendence_dto->props);
 
         if (isset($attendence_dto->paths) && count($attendence_dto->paths) > 0) {
-            static::$attendence_model = $attendence;
+            $this->attendence_model = $attendence;
             $attendence->paths = $this->pushFiles($attendence_dto->paths);
         }
 

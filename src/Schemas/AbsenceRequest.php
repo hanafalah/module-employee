@@ -39,7 +39,7 @@ class AbsenceRequest extends BaseModuleEmployee implements ContractsAbsenceReque
         $this->fillingProps($absence_request,$absence_request_dto->props);
 
         if (isset($absence_request_dto->paths) && count($absence_request_dto->paths) > 0) {
-            static::$absence_request_model = $absence_request;
+            $this->absence_request_model = $absence_request;
             $absence_request->paths = $this->pushFiles($absence_request_dto->paths);
         }
 
