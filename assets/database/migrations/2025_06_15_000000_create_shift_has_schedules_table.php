@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Hanafalah\ModuleEmployee\Models\Attendence\{
-    ShiftHasSchedule
+    ShiftHasSchedule,
+    ShiftSchedule
 };
 use Hanafalah\ModuleEmployee\Models\Attendence\Shift;
 
@@ -30,9 +31,11 @@ return new class extends Migration
         if (!$this->isTableExists()) {
             Schema::create($table_name, function (Blueprint $table) {
                 $shift = app(config('database.models.Shift', Shift::class));
+                $shift_schedule = app(config('database.models.ShiftSchedule', ShiftSchedule::class));
 
                 $table->ulid('id')->primary();
-                $table->string('', 255)->nullable(false);
+                $table->foreignIdFor($shift::class)->nullable(false)->index()->cascadeOnUpdate()->cascadeOnDelete();
+                $table->foreignIdFor($shift_schedule::class)->nullable(false)->index()->cascadeOnUpdate()->cascadeOnDelete();
                 $table->json('props')->nullable();
                 $table->timestamps();
                 $table->softDeletes();

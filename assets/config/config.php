@@ -1,9 +1,7 @@
 <?php
 
 use Hanafalah\ModuleEmployee\{
-    Models as ModuleEmployeeModels,
     Commands as ModuleEmployeeCommands,
-    Contracts
 };
 use Hanafalah\ModuleEmployee\Enums\Employee\CardIdentity;
 
