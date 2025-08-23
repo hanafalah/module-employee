@@ -16,8 +16,10 @@ class ShowEmployee extends ViewEmployee
             'people'     => $this->relationValidation('people', function () {
                 return $this->people->toShowApi()->resolve();
             }),
-            'employee_service' => $this->relationValidation('employeeService', function () {
-                return $this->employeeService->toShowApi()->resolve();
+            'employee_services' => $this->relationValidation('employeeServices', function () {
+                return $this->employeeServices->transform(function ($employeeService) {
+                    return $employeeService->toViewApiExcepts('reference','reference_type','reference_id');
+                });
             }),
             'user_reference'   => $this->relationValidation('userReference', function () {
                 return $this->userReference->toShowApi()->resolve();

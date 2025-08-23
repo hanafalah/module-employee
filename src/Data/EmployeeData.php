@@ -9,6 +9,7 @@ use Hanafalah\ModulePeople\Contracts\Data\PeopleData;
 use Hanafalah\ModuleProfession\Contracts\Data\OccupationData;
 use Hanafalah\ModuleUser\Contracts\Data\UserReferenceData;
 use Illuminate\Http\UploadedFile;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
 
@@ -56,6 +57,11 @@ class EmployeeData extends Data implements DataEmployeeData{
     #[MapInputName('employee_type')]
     #[MapName('employee_type')]
     public ?EmployeeTypeData $employee_type;
+
+    #[MapInputName('employee_services')]
+    #[MapName('employee_services')]
+    #[DataCollectionOf(EmployeeServiceData::class)]
+    public ?array $employee_services = null;
 
     #[MapInputName('shift_id')]
     #[MapName('shift_id')]

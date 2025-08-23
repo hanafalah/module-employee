@@ -70,7 +70,7 @@ class Employee extends BaseModel
         return [
             'people'        => fn($q) => $q->with(['addresses', 'cardIdentities']),
             'userReference' => fn($q) => $q->with(['roles', 'user']),
-            'room', 'rooms'
+            'room', 'rooms', 'employeeServices.servicePrices'
         ];
     }
 

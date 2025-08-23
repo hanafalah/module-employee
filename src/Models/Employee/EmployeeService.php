@@ -12,13 +12,6 @@ class EmployeeService extends Service
 {
     protected $table = 'services';
 
-    public function getViewResource()
-    {
-        return ViewEmployeeService::class;
-    }
-
-    public function getShowResource()
-    {
-        return ShowEmployeeService::class;
-    }
+    public function getViewResource(){return ViewEmployeeService::class;}
+    public function getShowResource(){return ShowEmployeeService::class;}
 }
