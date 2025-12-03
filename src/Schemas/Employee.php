@@ -125,9 +125,13 @@ class Employee extends BaseModuleEmployee implements ContractsEmployee, ProfileE
         $employee->save();
         //MANAGE EMPLOYEE ACCOUNT/USER ACCESS
         if (isset($employee_dto->user_reference)){
+            if (!isset($employee_dto->id)){
+                $employee->load(['userReference' => function($query){
+                    $query->withoutGlobalScopes();
+                }]);
+            }
             $user_reference_dto                 = $employee_dto->user_reference;
-            $user_reference_dto->id             = $employee->userReference->getKey();
-            $user_reference_dto->uuid           = $employee->uuid;
+            $user_reference_dto->id             ??= $employee->userReference->getKey();
             $user_reference_dto->reference_id   = $employee->getKey();
             $user_reference_dto->reference_type = $employee->getMorphClass();
             $user_reference = $this->schemaContract('user_reference')->prepareStoreUserReference($user_reference_dto);
